@@ -25,7 +25,7 @@ class QueryEngine:
 
             env = os.environ.copy()
 
-            env["GRAPHRAG_LLM_MODEL"] = "qwen3:8b"
+            env["GRAPHRAG_LLM_MODEL"] = "qwen3.5:4b"
             env["GRAPHRAG_EMBEDDINGS_MODEL"] = "nomic-embed-text"
             env["GRAPHRAG_LLM_API_BASE"] = "http://localhost:11434/v1"
 

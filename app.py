@@ -314,7 +314,7 @@ with tab1:
                             st.markdown("""
                             1. Se há arquivos válidos em `input/`
                             2. Se o Ollama está rodando (`localhost:11434`)
-                            3. Se os modelos estão baixados (`ollama pull qwen3:8b`)
+                            3. Se os modelos estão baixados (`ollama pull qwen3.5:4b`)
                             """)
                 except Exception as e:
                     st.error(f"Erro: {str(e)}")
@@ -479,7 +479,7 @@ with tab3:
         st.markdown("""
         **Informacoes do Sistema:**
         - Motor: GraphRAG 3.0+
-        - LLM: Ollama (qwen3:8b)
+        - LLM: Ollama (qwen3.5:4b)
         - Embeddings: nomic-embed-text
         - Entrada: `input/` (apenas .txt e .md)
         - Saida: `ragtest/output/`

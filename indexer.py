@@ -9,6 +9,9 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Indexação local com LLM pode levar horas; ajuste via variável de ambiente
+INDEX_TIMEOUT_SECONDS = int(os.environ.get("INDEX_TIMEOUT_SECONDS", 4 * 60 * 60))
+
 class DocumentIndexManager:
     def __init__(self, input_dir="input", cache_file=".index_cache"):
         self.input_dir = Path(input_dir)
@@ -180,7 +183,7 @@ class DocumentIndexManager:
                     )
 
             # Set up environment variables
-            os.environ["GRAPHRAG_LLM_MODEL"] = "qwen3:8b"
+            os.environ["GRAPHRAG_LLM_MODEL"] = "qwen3.5:4b"
             os.environ["GRAPHRAG_EMBEDDINGS_MODEL"] = "nomic-embed-text"
             os.environ["GRAPHRAG_LLM_API_BASE"] = "http://localhost:11434/v1"
 
@@ -200,7 +203,7 @@ class DocumentIndexManager:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=600,
+                timeout=INDEX_TIMEOUT_SECONDS,
                 cwd=str(self.input_dir.parent)
             )
 
@@ -243,7 +246,8 @@ class DocumentIndexManager:
 
         except subprocess.TimeoutExpired:
             logger.error(
-                "Indexing timed out after 10 minutes"
+                f"Indexing timed out after "
+                f"{INDEX_TIMEOUT_SECONDS // 60} minutes"
             )
             return False
 

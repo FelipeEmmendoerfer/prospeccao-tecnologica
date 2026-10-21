@@ -51,16 +51,16 @@ O Ollama é o runtime de modelos de linguagem locais utilizado pelo projeto.
 Após instalar o Ollama, abra um terminal e execute:
 
 ```bash
-ollama pull qwen3:8b
+ollama pull qwen3.5:4b
 ollama pull nomic-embed-text
 ```
 
 | Modelo | Função | Tamanho Aproximado |
 |---|---|---|
-| `qwen3:8b` | LLM principal (geração de texto, extração de entidades) | ~5 GB |
+| `qwen3.5:4b` | LLM principal (geração de texto, extração de entidades) | ~3.4 GB |
 | `nomic-embed-text` | Modelo de embeddings (vetorização de texto) | ~275 MB |
 
-> **Nota:** Você pode substituir `qwen3:8b` por outro modelo compatível com Ollama (como `llama3:8b`, `mistral`, etc.), mas será necessário atualizar o arquivo `ragtest/settings.yaml`.
+> **Nota:** Você pode substituir `qwen3.5:4b` por outro modelo compatível com Ollama (como `llama3:8b`, `mistral`, etc.), mas será necessário atualizar o arquivo `ragtest/settings.yaml`.
 
 ### Git (opcional, para clonar o repositório)
 
@@ -80,7 +80,7 @@ cd GraphRag_App
 ### 2. Criar ambiente virtual
 
 ```bash
-python -m venv .venv
+py -3.12 -m venv venv
 
 # Windows
 .venv\Scripts\activate
@@ -221,7 +221,7 @@ Arquivos maiores e mais detalhados geram grafos mais ricos, com mais entidades e
 - **Arquivos médios (5-50 KB):** Indexação moderada (3-10 min), grafo bem conectado
 - **Arquivos grandes (> 50 KB):** Indexação lenta (10-30+ min), grafo denso e detalhado
 
-O tempo de indexação depende diretamente da capacidade da sua GPU/CPU e do modelo utilizado. Modelos menores (como `qwen3:8b`) são mais rápidos mas podem perder algumas entidades sutis.
+O tempo de indexação depende diretamente da capacidade da sua GPU/CPU e do modelo utilizado. Modelos pequenos (como `qwen3.5:4b`) são mais rápidos mas podem perder algumas entidades sutis.
 
 ### Formato dos documentos
 
@@ -337,7 +337,7 @@ curl http://localhost:11434
 ollama list
 
 # Baixar modelo necessário
-ollama pull qwen3:8b
+ollama pull qwen3.5:4b
 ollama pull nomic-embed-text
 ```
 
@@ -371,7 +371,7 @@ pip install -r requirements.txt --upgrade --force-reinstall
 | Pyvis | 0.3.2+ | Visualização de grafos (vis.js) |
 | NetworkX | 3.0+ | Análise de grafos |
 | Ollama | - | Runtime de LLMs locais |
-| Qwen3 8B | - | Modelo de linguagem principal |
+| Qwen3.5 4B | - | Modelo de linguagem principal |
 | Nomic Embed Text | - | Modelo de embeddings |
 | LanceDB | - | Banco de dados vetorial |
 | Pandas / PyArrow | - | Processamento de dados |

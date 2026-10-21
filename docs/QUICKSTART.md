@@ -15,10 +15,10 @@
 ### 1️⃣ Baixar o modelo Ollama (⏱️ ~2-5 min, depende da conexão)
 
 ```powershell
-ollama pull qwen2:8b
+ollama pull qwen3.5:4b
 ```
 
-**Alternativas** se qwen2:8b for pesado:
+**Alternativas** (outros modelos leves):
 - `ollama pull mistral` (mais leve, ~4GB)
 - `ollama pull neural-chat` (~4GB)
 - `ollama pull orca-mini` (~3GB)
@@ -92,7 +92,7 @@ meu_projeto/
 - **Primeira vez**: Pode levar alguns minutos para indexar
 - **Múltiplos arquivos**: A indexação é acumulativa
 - **Modelos**: Cada modelo tem características diferentes:
-  - qwen2:8b = melhor qualidade, mais lento (~12GB RAM)
+  - qwen3.5:4b = leve e equilibrado (~4GB RAM)
   - mistral = boa qualidade, rápido (~7GB RAM)
   - neural-chat = muito rápido, qualidade ok (~4GB RAM)
 

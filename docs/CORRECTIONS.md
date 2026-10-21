@@ -78,7 +78,7 @@ Data: 2026-06-11
 ✅ Pydantic instalado
 ✅ Ollama rodando em localhost:11434
 ✅ Modelo nomic-embed-text disponível
-⚠️  Modelo qwen2:8b não baixado (usuário precisa: ollama pull qwen2:8b)
+⚠️  Modelo qwen3.5:4b não baixado (usuário precisa: ollama pull qwen3.5:4b)
 ✅ Pastas input/, output/, ragtest/ existem
 ✅ settings.yaml configurado
 ```
@@ -87,7 +87,7 @@ Data: 2026-06-11
 
 1. **Baixar modelos Ollama**:
    ```bash
-   ollama pull qwen2:8b
+   ollama pull qwen3.5:4b
    ```
 
 2. **Iniciar aplicação**:

@@ -30,7 +30,7 @@ Deve mostrar os modelos instalados.
 #### 3️⃣ Baixar modelo se necessário
 
 ```powershell
-ollama pull qwen2:8b
+ollama pull qwen3.5:4b
 ```
 
 #### 4️⃣ Testar indexação manual
@@ -88,7 +88,7 @@ def query(self, text, method='local'):
 ## Checklist Completo
 
 - [ ] Ollama rodando (`ollama serve`)
-- [ ] Modelo baixado (`ollama list` mostra qwen2:8b)
+- [ ] Modelo baixado (`ollama list` mostra qwen3.5:4b)
 - [ ] Arquivo em `input/`
 - [ ] `ragtest/settings.yaml` existe
 - [ ] Botão "Indexar Agora" clicado
