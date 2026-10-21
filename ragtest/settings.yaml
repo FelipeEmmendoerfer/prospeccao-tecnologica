@@ -7,9 +7,12 @@
 completion_models:
   default_completion_model:
     model_provider: ollama
-    model: qwen3:8b
-    temperature: 0
-    max_tokens: 2000
+    model: qwen3.5:4b
+    call_args:
+      temperature: 0
+      max_tokens: 2000
+      num_ctx: 8192 # janela padrão do Ollama (4096) corta prompt + resposta da extração
+      reasoning_effort: none # desliga o modo thinking do Qwen (think: false no Ollama)
     api_base: http://localhost:11434
     auth_method: api_key
     api_key: ollama
