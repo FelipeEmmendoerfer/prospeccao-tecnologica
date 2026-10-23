@@ -57,7 +57,7 @@ Write-Host "========================================`n" -ForegroundColor Green
 
 Write-Host "Proximos passos:" -ForegroundColor Cyan
 Write-Host "1. Baixar modelo Ollama:" -ForegroundColor White
-Write-Host "   ollama pull qwen2:8b" -ForegroundColor Yellow
+Write-Host "   ollama pull qwen3.5:4b" -ForegroundColor Yellow
 Write-Host ""
 Write-Host "2. Executar a aplicacao:" -ForegroundColor White
 Write-Host "   streamlit run app.py" -ForegroundColor Yellow

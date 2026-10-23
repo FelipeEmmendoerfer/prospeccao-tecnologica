@@ -83,7 +83,7 @@ cd GraphRag_App
 py -3.12 -m venv venv
 
 # Windows
-.venv\Scripts\activate
+.\venv\Scripts\Activate.ps1
 
 # Linux / macOS
 source .venv/bin/activate
