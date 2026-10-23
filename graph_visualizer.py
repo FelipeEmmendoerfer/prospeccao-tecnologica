@@ -53,9 +53,10 @@ class GraphVisualizer:
 
             nodes = []
             for _, row in df_entities.iterrows():
-                # Handle different column naming conventions
+                # As relações referenciam entidades pelo nome (title), não pelo id;
+                # usar o id aqui deixava todas as arestas sem vértices
                 node_id = str(
-                    row.get("id", row.get("title", row.get("name", row.get("entity", ""))))
+                    row.get("title", row.get("name", row.get("entity", row.get("id", ""))))
                 )
                 label = str(
                     row.get("title", row.get("name", row.get("entity", node_id)))
@@ -91,16 +92,16 @@ class GraphVisualizer:
                         })
 
             # Calculate statistics
-            community_col = None
-            for col in ["community", "community_id", "cluster"]:
-                if col in df_entities.columns:
-                    community_col = col
-                    break
+            # No GraphRAG 3.x as comunidades ficam em communities.parquet, não nas entidades
+            communities_file = self.output_dir / "communities.parquet"
+            num_communities = 0
+            if communities_file.exists():
+                num_communities = len(pd.read_parquet(communities_file, columns=["community"]))
 
             stats = {
                 "total_entities": len(nodes),
                 "total_relationships": len(edges),
-                "communities": int(df_entities[community_col].nunique()) if community_col else 0,
+                "communities": num_communities,
                 "avg_degree": round((2 * len(edges)) / max(len(nodes), 1), 2)
             }
 

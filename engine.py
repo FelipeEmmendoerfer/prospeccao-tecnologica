@@ -8,6 +8,10 @@ import os
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Formato de resposta igual para todos os métodos; respostas longas induzem o
+# modelo pequeno a completar o texto com inferências sem apoio nos dados
+RESPONSE_TYPE = "Single paragraph, at most 5 sentences"
+
 class QueryEngine:
     def __init__(self):
         self.cache = {}
@@ -39,7 +43,8 @@ class QueryEngine:
                     "context": ""
                 }
 
-            cmd = [python_exe, "-m", "graphrag", "query", "--root", "ragtest", "--method", method, text]
+            cmd = [python_exe, "-m", "graphrag", "query", "--root", "ragtest", "--method", method,
+                   "--response-type", RESPONSE_TYPE, text]
 
             logger.info(f"Running query: {text}")
 
@@ -47,7 +52,7 @@ class QueryEngine:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=120,
+                timeout=600,
                 env=env
             )
 
