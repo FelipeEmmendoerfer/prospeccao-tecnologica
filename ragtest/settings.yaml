@@ -10,8 +10,8 @@ completion_models:
     model: qwen3.5:4b
     call_args:
       temperature: 0
-      max_tokens: 2000
-      num_ctx: 8192 # janela padrão do Ollama (4096) corta prompt + resposta da extração
+      max_tokens: 4000 # 2000 cortava a lista de relações na extração
+      num_ctx: 12288 # precisa caber prompt (até ~5,5k no gleaning) + resposta (4k); o padrão do Ollama é 4096
       reasoning_effort: none # desliga o modo thinking do Qwen (think: false no Ollama)
     api_base: http://localhost:11434
     auth_method: api_key

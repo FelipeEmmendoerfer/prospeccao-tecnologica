@@ -34,6 +34,11 @@ h1, h2, h3, h4, h5, h6, p, span, div, label {
     font-family: 'Inter', sans-serif !important;
 }
 
+/* Ícones do Streamlit usam fonte própria; com Inter o nome do ícone aparece como texto */
+[data-testid="stIconMaterial"], .material-symbols-rounded {
+    font-family: 'Material Symbols Rounded' !important;
+}
+
 /* Tabs */
 .stTabs [data-baseweb="tab-list"] {
     background: rgba(255, 255, 255, 0.03);
@@ -543,185 +548,145 @@ with tab4:
                     font_color="#e2e8f0",
                     directed=False
                 )
-                
-                # Configure physics (Force Atlas 2 style)
-                if physics_enabled:
-                    net.set_options("""
-                    {
-                        "physics": {
-                            "enabled": true,
-                            "forceAtlas2Based": {
-                                "gravitationalConstant": -80,
-                                "centralGravity": 0.01,
-                                "springLength": 120,
-                                "springConstant": 0.08,
-                                "damping": 0.4,
-                                "avoidOverlap": 0.8
-                            },
-                            "solver": "forceAtlas2Based",
-                            "stabilization": {
-                                "enabled": true,
-                                "iterations": 200,
-                                "updateInterval": 25
-                            }
+
+                net.set_options(json.dumps({
+                    "physics": {
+                        "enabled": physics_enabled,
+                        "solver": "forceAtlas2Based",
+                        "forceAtlas2Based": {
+                            "gravitationalConstant": -120,
+                            "centralGravity": 0.01,
+                            "springLength": 140,
+                            "springConstant": 0.06,
+                            "damping": 0.5,
+                            "avoidOverlap": 1
                         },
-                        "nodes": {
-                            "font": {
-                                "size": 12,
-                                "color": "#e2e8f0",
-                                "face": "Inter, sans-serif"
-                            },
-                            "borderWidth": 2,
-                            "borderWidthSelected": 4,
-                            "shadow": {
-                                "enabled": true,
-                                "color": "rgba(102, 126, 234, 0.3)",
-                                "size": 10
-                            }
-                        },
-                        "edges": {
-                            "color": {
-                                "color": "rgba(102, 126, 234, 0.4)",
-                                "highlight": "#667eea",
-                                "hover": "#764ba2"
-                            },
-                            "smooth": {
-                                "enabled": true,
-                                "type": "continuous"
-                            },
-                            "width": 1.5
-                        },
-                        "interaction": {
-                            "hover": true,
-                            "tooltipDelay": 200,
-                            "navigationButtons": true,
-                            "keyboard": {
-                                "enabled": true
-                            },
-                            "zoomView": true,
-                            "dragView": true
+                        "stabilization": {"enabled": True, "iterations": 300}
+                    },
+                    "nodes": {
+                        "shape": "dot",
+                        "borderWidth": 2,
+                        "borderWidthSelected": 3,
+                        # Contorno escuro no texto deixa o nome legível sobre as arestas
+                        "font": {
+                            "size": 14,
+                            "color": "#e2e8f0",
+                            "face": "Inter, sans-serif",
+                            "strokeWidth": 4,
+                            "strokeColor": "#0f0f1a"
                         }
+                    },
+                    "edges": {
+                        "color": {
+                            "color": "rgba(148, 163, 184, 0.45)",
+                            "highlight": "#e2e8f0",
+                            "hover": "#cbd5e1"
+                        },
+                        "smooth": {"enabled": True, "type": "continuous"},
+                        "selectionWidth": 2
+                    },
+                    "interaction": {
+                        "hover": True,
+                        "tooltipDelay": 150,
+                        "navigationButtons": True,
+                        "keyboard": {"enabled": True},
+                        "zoomView": True,
+                        "dragView": True
                     }
-                    """)
-                else:
-                    net.set_options("""
-                    {
-                        "physics": {
-                            "enabled": false
-                        },
-                        "nodes": {
-                            "font": {
-                                "size": 12,
-                                "color": "#e2e8f0",
-                                "face": "Inter, sans-serif"
-                            },
-                            "borderWidth": 2,
-                            "shadow": {
-                                "enabled": true,
-                                "color": "rgba(102, 126, 234, 0.3)",
-                                "size": 10
-                            }
-                        },
-                        "edges": {
-                            "color": {
-                                "color": "rgba(102, 126, 234, 0.4)",
-                                "highlight": "#667eea",
-                                "hover": "#764ba2"
-                            },
-                            "smooth": {
-                                "enabled": true,
-                                "type": "continuous"
-                            },
-                            "width": 1.5
-                        },
-                        "interaction": {
-                            "hover": true,
-                            "tooltipDelay": 200,
-                            "navigationButtons": true,
-                            "keyboard": {
-                                "enabled": true
-                            }
-                        }
-                    }
-                    """)
-                
-                # Color palette (Gephi-style)
-                colors = [
-                    "#667eea", "#764ba2", "#f093fb", "#4fd1c5", "#f6ad55",
-                    "#fc8181", "#68d391", "#63b3ed", "#b794f4", "#fbb6ce",
-                    "#9ae6b4", "#fbd38d", "#bee3f8", "#c4b5fd", "#a3e635"
-                ]
-                
+                }))
+
+                # Uma cor fixa por tipo de entidade (o hash() do Python muda a cada execução)
+                type_colors = {
+                    "PERSON": "#f6ad55",
+                    "SYSTEM": "#63b3ed",
+                    "COMPONENT": "#b794f4",
+                    "DECISION": "#68d391",
+                    "INCIDENT": "#fc8181",
+                    "REQUIREMENT": "#4fd1c5",
+                }
+                default_color = "#a0aec0"
+
                 # Build a set of all node IDs for validation
-                node_ids = set()
-                
-                # Calculate degree from edges (only for nodes that exist)
+                node_ids = {node["id"] for node in graph_data["nodes"]}
+
+                # Grau e peso considerando só arestas cujos dois vértices existem
+                valid_edges = [
+                    e for e in graph_data["edges"]
+                    if e["source"] in node_ids and e["target"] in node_ids
+                ]
+                edges_skipped = len(graph_data["edges"]) - len(valid_edges)
+
                 degree_count = {}
-                for edge in graph_data["edges"]:
+                for edge in valid_edges:
                     degree_count[edge["source"]] = degree_count.get(edge["source"], 0) + 1
                     degree_count[edge["target"]] = degree_count.get(edge["target"], 0) + 1
-                
-                max_degree = max(degree_count.values()) if degree_count else 1
-                
-                # Add ALL nodes first
+                max_degree = max(degree_count.values(), default=1)
+
+                weights = [e.get("weight", 1) for e in valid_edges] or [1]
+                min_w, max_w = min(weights), max(weights)
+
                 for node in graph_data["nodes"]:
                     node_id = node["id"]
-                    node_ids.add(node_id)
-                    
                     degree = degree_count.get(node_id, 0)
-                    size = 10 + (degree / max_degree) * 40
-                    
-                    color_idx = hash(node.get("type", node_id)) % len(colors)
-                    color = colors[color_idx]
-                    
-                    tooltip = f"<b>{node['label']}</b><br>"
-                    tooltip += f"Tipo: {node.get('type', 'N/A')}<br>"
-                    tooltip += f"Conexoes: {degree}"
+                    color = type_colors.get(node.get("type", "").upper(), default_color)
+
+                    tooltip = f"{node['label']}\nTipo: {node.get('type', 'N/A')}\nConexões: {degree}"
                     if node.get("description"):
-                        tooltip += f"<br><br>{node['description']}"
-                    
+                        tooltip += f"\n\n{node['description']}"
+
                     net.add_node(
                         node_id,
-                        label=node["label"] if show_labels else "",
-                        size=size,
+                        label=node["label"] if show_labels else " ",
+                        size=12 + (degree / max_degree) * 28,
                         color={
                             "background": color,
                             "border": color,
-                            "highlight": {"background": "#ffffff", "border": color}
+                            "highlight": {"background": "#ffffff", "border": color},
+                            "hover": {"background": color, "border": "#ffffff"}
                         },
-                        title=tooltip,
-                        font={"size": max(8, int(8 + degree * 2)), "color": "#e2e8f0"}
+                        title=tooltip
                     )
-                
-                # Add edges ONLY if both source and target nodes exist
-                edges_added = 0
-                edges_skipped = 0
-                for edge in graph_data["edges"]:
-                    source = edge["source"]
-                    target = edge["target"]
-                    
-                    # Validate both nodes exist before adding edge
-                    if source in node_ids and target in node_ids:
-                        tooltip = edge.get("relationship", "")
-                        weight = edge.get("weight", 1)
-                        net.add_edge(
-                            source,
-                            target,
-                            title=tooltip,
-                            width=min(1 + weight * 0.5, 5)
-                        )
-                        edges_added += 1
-                    else:
-                        edges_skipped += 1
-                
+
+                # Espessura proporcional ao peso da relação, entre 1 e 4 px
+                for edge in valid_edges:
+                    weight = edge.get("weight", 1)
+                    ratio = (weight - min_w) / (max_w - min_w) if max_w > min_w else 0.5
+                    net.add_edge(
+                        edge["source"],
+                        edge["target"],
+                        title=edge.get("relationship", ""),
+                        width=1 + ratio * 3
+                    )
+
                 # Generate and display HTML
                 html_path = Path("graph_viz.html")
                 net.save_graph(str(html_path))
-                
+
                 with open(html_path, "r", encoding="utf-8") as f:
                     html_content = f.read()
-                
-                components.html(html_content, height=graph_height + 50, scrolling=False)
+
+                # Remove a moldura branca do template do Pyvis e ajusta o tooltip ao tema escuro
+                html_content = html_content.replace("</head>", """<style>
+                    body { margin: 0; background: #0f0f1a; }
+                    .card { border: none !important; background: #0f0f1a !important; }
+                    #mynetwork { border: none !important; }
+                    div.vis-tooltip {
+                        white-space: pre-wrap; max-width: 320px;
+                        background: #1a1a2e; color: #e2e8f0;
+                        border: 1px solid #334155; border-radius: 6px;
+                        font-family: Inter, sans-serif; font-size: 12px; padding: 8px;
+                    }
+                </style></head>""", 1)
+
+                # Legenda com os tipos presentes no grafo
+                present_types = sorted({n.get("type", "").upper() for n in graph_data["nodes"]})
+                legend = " &nbsp; ".join(
+                    f'<span style="color:{type_colors.get(t, default_color)}">●</span> {t.title() or "Outro"}'
+                    for t in present_types
+                )
+                st.markdown(f'<div style="font-size:0.85rem;color:#cbd5e1">{legend}</div>', unsafe_allow_html=True)
+
+                components.html(html_content, height=graph_height + 10, scrolling=False)
                 
                 st.caption(f"Arraste nos para reorganizar | Scroll para zoom | Hover para detalhes")
                 if edges_skipped > 0:

@@ -56,5 +56,13 @@ If you decide to use general knowledge, you should add a delimiter stating that 
 
 "Person X is the owner of Company Y and subject to many allegations of wrongdoing. [Data: General Knowledge (href)]".
 
+---Rules---
+
+- State only facts that are written explicitly in the data. Do not infer causes, violations, consequences or recommendations that the data does not state.
+- Keep names, codes and identifiers (people, systems, documents, requirements, campaigns) exactly as they appear in the data. Do not translate them.
+- Only cite record ids that appear in the data. Never invent ids.
+- If the data does not contain the answer, say so instead of guessing.
+- Write the answer in the same language as the user's question.
+
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown. Now answer the following query using the data above:
 
