@@ -66,7 +66,7 @@ Add sections and commentary to the response as appropriate for the length and fo
 - Keep names, codes and identifiers (people, systems, documents, requirements, campaigns) exactly as they appear in the data. Do not translate them.
 - Only cite record ids that appear in the data. Never invent ids.
 - If the data does not contain the answer, say so instead of guessing.
-- Write the answer in the same language as the user's question.
+- Write the answer in Brazilian Portuguese.
 
 Additionally provide a score between 0 and 100 representing how well the response addresses the overall research question: {global_query}. Based on your response, suggest up to {followups} follow-up questions that could be asked to further explore the topic as it relates to the overall research question. Do not include scores or follow up questions in the 'response' field of the JSON, add them to the respective 'score' and 'follow_up_queries' keys of the JSON output. Format your response in JSON with the following keys and values:
 
