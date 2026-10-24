@@ -1,0 +1,113 @@
+Falhas de TI relacionadas à CrowdStrike em 2024
+
+Em 19 de julho de 2024, a empresa americana de cibersegurança CrowdStrike distribuiu uma atualização defeituosa para o seu software de segurança Falcon Sensor, o que causou problemas generalizados em computadores com Microsoft Windows que executavam esse software. Como resultado, cerca de 8,5 milhões de sistemas travaram e não conseguiram reiniciar corretamente, no que foi chamado de a maior interrupção da história da tecnologia da informação e de "histórica em escala".
+
+A interrupção afetou o dia a dia, empresas e governos no mundo todo. Muitos setores foram atingidos: companhias aéreas, aeroportos, bancos, hotéis, hospitais, indústrias, bolsas de valores, emissoras de TV, postos de combustível, lojas de varejo e serviços governamentais, como serviços de emergência e sites. O prejuízo financeiro mundial foi estimado em dezenas de bilhões.
+
+Em poucas horas o erro foi descoberto e uma correção foi liberada, mas, como muitos computadores afetados precisavam ser consertados manualmente, as interrupções continuaram em muitos serviços.
+
+Contexto
+
+A CrowdStrike produz um conjunto de produtos de segurança para empresas, criados para proteger computadores contra ataques cibernéticos. O Falcon Sensor, agente de detecção e resposta em endpoints (EDR) da CrowdStrike, funciona no nível do kernel do sistema operacional de cada computador para detectar e impedir ameaças. A CrowdStrike distribui atualizações rotineiramente aos seus clientes para que os computadores consigam lidar com novas ameaças.
+
+A falha
+
+Em 19 de julho de 2024, às 04:09 UTC, a CrowdStrike distribuiu uma atualização de configuração defeituosa para o Falcon Sensor em PCs e servidores Windows. Uma modificação no arquivo de configuração responsável por inspecionar named pipes, o Channel File 291, provocou uma leitura de memória fora dos limites no cliente do Falcon Sensor para Windows, o que resultou em uma falha de página inválida. A atualização fez as máquinas entrarem em um ciclo de reinicialização (bootloop) ou iniciarem em modo de recuperação.
+
+Quase imediatamente, máquinas virtuais Windows na plataforma de nuvem Microsoft Azure começaram a reiniciar e travar e, às 06:48 UTC, o Google Compute Engine também relatou o problema. O problema afetou sistemas com Windows 10 e Windows 11 que executavam o Falcon Sensor. A maioria dos PCs Windows pessoais não foi afetada, porque o software da CrowdStrike era usado principalmente por organizações, e não em pequenos escritórios e residências. O software da CrowdStrike não oferecia aos clientes uma forma de adiar a instalação dos seus arquivos de conteúdo. Computadores com macOS e Linux não foram afetados, porque o arquivo de conteúdo problemático era apenas para Windows, mas problemas parecidos já tinham afetado as versões para Linux do software da CrowdStrike em abril de 2024.
+
+A CrowdStrike reverteu a atualização de conteúdo às 05:27 UTC, e os dispositivos que iniciaram depois da reversão não foram afetados.
+
+Às 07:15 UTC, o Google afirmou que a atualização da CrowdStrike era a causa. Em poucas horas, o CEO da CrowdStrike, George Kurtz, confirmou que a atualização defeituosa do arquivo de configuração de kernel da CrowdStrike tinha causado o problema. Às 09:45 UTC, George Kurtz confirmou que a correção tinha sido implantada e que o problema não era resultado de um ataque cibernético.
+
+O impacto sobre empresas da região central dos Estados Unidos foi agravado por uma interrupção não relacionada do Microsoft Azure no dia anterior. Em 18 de julho, a plataforma Microsoft Azure teve uma falha que bloqueou o acesso de algumas empresas ao seu armazenamento e aos aplicativos do Microsoft 365 na região Central US do Azure.
+
+Correção
+
+As máquinas afetadas podiam ser recuperadas reiniciando-as enquanto conectadas à rede, de preferência por cabo Ethernet, o que dava a oportunidade de baixar o arquivo de canal revertido; segundo relatos, eram necessárias várias reinicializações.
+
+Se os travamentos continuassem, a correção exigia iniciar o computador em modo de segurança ou no Ambiente de Recuperação do Windows e apagar qualquer arquivo .sys que começasse com C-00000291- e tivesse horário 04:09 UTC no diretório %windir%\System32\drivers\CrowdStrike\. Como esse processo precisava ser feito localmente em cada máquina, a previsão era de que as empresas afetadas levassem dias para restaurar todos os sistemas. As equipes técnicas precisavam reiniciar os computadores um por um, com intervenção manual em cada sistema.
+
+Em dispositivos com a criptografia de disco BitLocker do Windows ativada, que as empresas costumam usar para aumentar a segurança, o problema se agravava, porque as chaves de recuperação do BitLocker, de 48 dígitos e únicas para cada sistema, precisavam ser digitadas manualmente, com dificuldades adicionais para entregá-las a usuários em trabalho remoto. Além disso, várias organizações que guardavam as chaves de recuperação do BitLocker em servidores locais não conseguiam acessá-las, porque esses servidores também tinham travado.
+
+A Microsoft também recomendou restaurar um backup anterior a 18 de julho para resolver o problema.
+
+Impacto
+
+Houve interrupções no mundo todo, refletindo o amplo uso do Microsoft Windows e do software da CrowdStrike por corporações globais de vários setores. Na época do incidente, a CrowdStrike dizia ter mais de 24.000 clientes, incluindo quase 60% das empresas da Fortune 500 e mais da metade das empresas da Fortune 1000. Em 20 de julho, a Microsoft estimou que 8,5 milhões de dispositivos foram afetados pela atualização, o que, segundo ela, representava menos de um por cento de todos os dispositivos Windows.
+
+Às 04:09 UTC de 19 de julho, horário em que a atualização defeituosa foi liberada, era meio do expediente na Oceania e na Ásia, madrugada na Europa e meia-noite em grande parte das Américas.
+
+Alguns países foram menos afetados. A China, que busca autossuficiência em TI, não teve impacto nos serviços do dia a dia, incluindo companhias aéreas e bancos, embora algumas filiais de empresas estrangeiras e hotéis de luxo no país tenham sido afetados. A Rússia e o Irã, ambos impedidos por sanções internacionais de usar serviços de empresas americanas de alta tecnologia, não relataram interrupções.
+
+A empresa de quantificação de risco cibernético Kovrr calculou que o custo total para a economia do Reino Unido provavelmente ficaria entre 1,7 e 2,3 bilhões de libras (2,18 a 2,96 bilhões de dólares).
+
+A seguradora Parametrix, especializada em interrupções de nuvem, estimou que as 500 maiores empresas dos Estados Unidos em receita, excluindo a Microsoft, tiveram cerca de 5,4 bilhões de dólares em perdas financeiras por causa da interrupção, mas apenas entre 540 milhões e 1,08 bilhão de dólares dessas perdas seriam cobertos por seguro.
+
+Responsabilidade da CrowdStrike
+
+Os termos e condições da própria CrowdStrike para o Falcon Sensor limitam a responsabilidade da empresa aos "valores pagos", o que na prática equivale a um reembolso. Clientes maiores podem ter negociado termos diferentes.
+
+Na União Europeia, é possível que a CrowdStrike seja responsabilizada com base no GDPR, o regulamento de proteção de dados, que trata do impacto de incidentes de segurança sobre dados de usuários. O regulamento é mais conhecido por vazamentos de dados, mas também se aplica à destruição de dados. Não está claro se a perda temporária de acesso aos dados basta para gerar responsabilidade.
+
+Transporte aéreo nos Estados Unidos
+
+Na manhã da sexta-feira, 19 de julho, a United Airlines, a Delta Air Lines e a American Airlines suspenderam as decolagens (ground stop), permitindo apenas que os aviões já em voo chegassem aos seus destinos. A Allegiant Air também ficou em solo por causa da interrupção. Por volta das 10h30 no horário do leste dos Estados Unidos, a agência AP informou que cerca de 1.500 voos já tinham sido cancelados no país. A American Airlines, a United Airlines e a Allegiant Air se recuperaram relativamente rápido depois da sexta-feira.
+
+A Delta Air Lines, porém, a mais afetada entre as grandes companhias aéreas americanas, sofreu um colapso operacional que se estendeu pelo fim de semana. A companhia cancelou mais de 1.200 voos na sexta-feira. Milhares de viajantes ficaram presos e passaram a noite no Aeroporto Internacional Hartsfield-Jackson de Atlanta, o maior hub da Delta Air Lines e o aeroporto mais movimentado do mundo em número de passageiros. Sem aviso, a Delta Air Lines proibiu menores desacompanhados em seus voos até o fim de 23 de julho.
+
+A Delta Air Lines cancelou mais de 1.400 voos em 20 de julho e mais de 1.300 em 21 de julho. Com muitos passageiros ainda presos no aeroporto de Atlanta depois de duas noites seguidas, o aeroporto acionou um "plano de crise de concessões" e um plano para devolver aos passageiros as bagagens despachadas.
+
+Em 21 de julho, o CEO da Delta Air Lines, Ed Bastian, pediu desculpas aos clientes em um comunicado e revelou que a interrupção tinha deixado um dos programas de rastreamento de tripulação da companhia "incapaz de processar com eficácia o número sem precedentes de mudanças provocadas pelo desligamento dos sistemas". O diretor de TI (CIO) da Delta Air Lines, Rahul Samant, disse que o programa voltou a funcionar por volta das 11h de 19 de julho, mas ficou sobrecarregado pelo acúmulo de atualizações à espera de processamento e desde então tentava se atualizar. Como a suspensão das decolagens deixou muitos tripulantes nos lugares errados, a Delta Air Lines teve dificuldade para reunir pilotos e comissários suficientes nos portões para operar os voos programados. Muitos voos foram adiados repetidamente e por fim cancelados, porque os poucos tripulantes que chegavam ao portão de um voo atingiam o limite legal de horas de trabalho antes que a companhia conseguisse completar a tripulação. Isso fez a crise crescer como uma bola de neve, já que esses tripulantes e seus aviões ficavam no lugar errado para os voos do dia seguinte. No mesmo dia, o Secretário de Transportes dos Estados Unidos, Pete Buttigieg, disse nas redes sociais que o Departamento de Transportes dos Estados Unidos tinha recebido centenas de reclamações sobre a Delta Air Lines e lembrou a companhia das suas obrigações legais com os passageiros afetados.
+
+Em 22 de julho, a Delta Air Lines cancelou mais de 1.200 voos. Em 23 de julho, o Departamento de Transportes dos Estados Unidos anunciou uma investigação formal sobre o tratamento dado pela Delta Air Lines aos passageiros. Nesse dia, Pete Buttigieg estimou que mais de 500.000 passageiros tinham sido afetados pelos cancelamentos da Delta Air Lines.
+
+Em 25 de julho, a Delta Air Lines voltou à operação normal, depois de cancelar mais de 7.000 voos; os passageiros tinham registrado mais de 5.000 reclamações contra a companhia no Departamento de Transportes dos Estados Unidos. Em 26 de julho, o jornal The Washington Post informou que o departamento investigava comunicações supostamente enganosas da Delta Air Lines, que ofereciam apenas créditos para voos futuros como compensação pelos voos cancelados e não informavam claramente aos passageiros o seu direito legal a reembolso em dinheiro.
+
+Em 31 de julho, Ed Bastian disse que a interrupção tinha custado 500 milhões de dólares à Delta Air Lines e que a companhia processaria a CrowdStrike para recuperar parte das perdas. Em 8 de agosto, a Delta Air Lines confirmou, em documento enviado à Securities and Exchange Commission (SEC), que mais de 7.000 voos foram cancelados ao longo de cinco dias e estimou as perdas em 380 milhões de dólares em receita perdida e 170 milhões de dólares em despesas, somando cerca de 550 milhões de dólares. A Delta Air Lines também estimou que cerca de 1,3 milhão de passageiros foram afetados pelos cancelamentos.
+
+A Southwest Airlines, terceira maior companhia aérea dos Estados Unidos em passageiros domésticos, não foi afetada. Um porta-voz da Southwest Airlines confirmou que a companhia não teve impacto da interrupção da CrowdStrike, mas se recusou a confirmar a especulação de analistas do setor de que ela teria sido protegida por seu software notoriamente desatualizado.
+
+Resposta
+
+Em entrevista ao vivo no programa Today, da NBC, o CEO da CrowdStrike, George Kurtz, pediu desculpas ao público. Ele disse que os líderes da empresa estavam "profundamente arrependidos pelo impacto que causamos aos clientes, aos viajantes e a qualquer pessoa afetada". A CrowdStrike alertou que agentes mal-intencionados poderiam tentar se passar por funcionários da empresa ou por pesquisadores independentes que alegassem ajudar a resolver o problema.
+
+O governo do presidente dos Estados Unidos, Joe Biden, entrou em contato com a CrowdStrike para oferecer ajuda e, em 23 de julho, George Kurtz foi convidado a depor no Congresso para explicar como a interrupção ocorreu e o que a CrowdStrike estava fazendo para evitar incidentes futuros.
+
+A CrowdStrike ganhou o Pwnie Award de 2024 na categoria Most Epic Fail ("falha mais épica"), recebido pessoalmente pelo presidente da CrowdStrike, Michael Sentonas, na cerimônia anual da conferência DEF CON.
+
+Processo judicial
+
+Em outubro de 2024, a Delta Air Lines entrou com um processo de 500 milhões de dólares no estado da Geórgia contra a CrowdStrike, alegando negligência grave, quebra de contrato, invasão de sistema computacional e práticas comerciais enganosas. A Delta Air Lines afirmou que a CrowdStrike implantou atualizações de software não testadas, sem o consentimento adequado e sem testes suficientes.
+
+A CrowdStrike entrou com um processo contra a Delta Air Lines, argumentando que os danos deveriam ser limitados pelo contrato e que a lei da Geórgia impede ações de responsabilidade civil por perdas econômicas quando existe um contrato. A CrowdStrike negou responsabilidade pelos atrasos na recuperação da Delta Air Lines.
+
+Em maio de 2025, um juiz da Geórgia permitiu que a Delta Air Lines prosseguisse com as acusações de negligência grave, invasão de sistema computacional e fraude limitada envolvendo suposto acesso não autorizado aos sistemas. O juiz, porém, rejeitou as acusações mais amplas de fraude, decidindo que os possíveis danos podem ser limitados pelo contrato. A CrowdStrike sustentou que a sua responsabilidade provavelmente não passaria de "poucos milhões de dólares".
+
+Separadamente, uma ação coletiva federal de passageiros contra a Delta Air Lines foi autorizada a prosseguir, alegando que a companhia reteve reembolsos de forma ilegal e não ofereceu compensação adequada pela interrupção.
+
+Reação do setor
+
+O consultor de cibersegurança Troy Hunt chamou o incidente de "a maior interrupção de TI da história", acrescentando que aquilo era basicamente o que todos temiam com o bug do milênio (Y2K), só que desta vez tinha acontecido de verdade.
+
+Análise da causa
+
+A atualização de 19 de julho era uma instância de um modelo (template) que tinha sido testado e liberado em março de 2024 como parte de uma atualização do Falcon Sensor. Essa nova instância, o Channel File 291, passou na validação por causa de um bug no software de verificação de conteúdo da CrowdStrike. O próprio Falcon Sensor interpreta o arquivo de forma diferente, o que levou a uma falha do software em modo kernel.
+
+Centralização e homogeneidade
+
+A interrupção levantou questões sobre oligopólio e centralização no setor de tecnologia da informação. A maioria dos computadores do mundo usa Microsoft Windows, criando uma monocultura que reduz a resiliência. O especialista em cibersegurança Ciaran Martin disse que o episódio era uma ilustração muito desconfortável da fragilidade da infraestrutura central da internet no mundo. O especialista em infraestrutura crítica Gregory Falco disse que os fornecedores de cibersegurança fazem parte da espinha dorsal homogênea dos sistemas modernos e que uma falha nas suas operações tem impacto semelhante ao de falhas em sistemas muito conhecidos. Especialistas em segurança sugeriram mais redundância para evitar pontos únicos de falha e o uso mais amplo de sistemas descentralizados e heterogêneos. Por outro lado, o especialista em cibersegurança Andrew Plato argumentou que as monoculturas são positivas no saldo, porque, do ponto de vista da segurança, usar um conjunto menor e padronizado de software permite identificar um problema de forma mais rápida e fácil.
+
+Práticas de TI
+
+Especialistas suspeitam que a atualização não passou pelos procedimentos rotineiros de gestão de atualizações (patch management), como testar a atualização em um ambiente isolado (sandbox) para verificar que não havia problemas.
+
+Também foi sugerido tornar obrigatória a divulgação de violações e vulnerabilidades. Em entrevista à revista Wired, o consultor de cibersegurança Jake Williams disse que a interrupção mostrou por que enviar atualizações sem intervenção da equipe de TI é insustentável e que as pessoas poderiam passar a exigir mudanças nesse modelo de operação.
+
+Projeto do sistema operacional
+
+A Microsoft culpou um acordo antitruste de 2009 com a União Europeia, que, segundo ela, a obrigou a manter o acesso de baixo nível ao kernel para desenvolvedores terceiros. O documento não afirma explicitamente que a Microsoft precisa dar acesso ao kernel, mas diz que a Microsoft deve fornecer acesso às mesmas APIs usadas pelos seus próprios produtos de segurança. A União Europeia rejeitou as alegações.
+
+No Linux, é possível usar o eBPF em vez de módulos de kernel para programar esse tipo de software.
+
+Desde o macOS Catalina, de 2019, esse tipo de software pode usar o Endpoint Security Framework em vez de uma extensão de kernel, e essa abordagem vem sendo gradualmente imposta nos sistemas da Apple.

@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 # modelo pequeno a completar o texto com inferências sem apoio nos dados
 RESPONSE_TYPE = "Single paragraph, at most 5 sentences"
 
+# Buscas Global e Drift com modelo local podem levar minutos
+QUERY_TIMEOUT_SECONDS = 600
+
 class QueryEngine:
     def __init__(self):
         self.cache = {}
@@ -52,7 +55,7 @@ class QueryEngine:
                 cmd,
                 capture_output=True,
                 text=True,
-                timeout=600,
+                timeout=QUERY_TIMEOUT_SECONDS,
                 env=env
             )
 
@@ -86,7 +89,7 @@ class QueryEngine:
 
         except subprocess.TimeoutExpired:
             return {
-                "response": "⏱️ Timeout da consulta (limite de 2 minutos excedido)",
+                "response": f"⏱️ Timeout da consulta (limite de {QUERY_TIMEOUT_SECONDS // 60} minutos excedido)",
                 "context": ""
             }
 

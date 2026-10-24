@@ -70,6 +70,6 @@ Do not include information where the supporting evidence for it is not provided.
 - Keep names, codes and identifiers (people, systems, documents, requirements, campaigns) exactly as they appear in the data. Do not translate them.
 - Only cite record ids that appear in the data. Never invent ids.
 - If the data does not contain the answer, say so instead of guessing.
-- Write the answer in the same language as the user's question.
+- Write the answer in Brazilian Portuguese.
 
 Add sections and commentary to the response as appropriate for the length and format. Style the response in markdown.

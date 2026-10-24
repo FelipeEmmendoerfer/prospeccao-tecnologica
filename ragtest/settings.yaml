@@ -73,7 +73,8 @@ embed_text:
 extract_graph:
   completion_model_id: default_completion_model
   prompt: "prompts/extract_graph.txt"
-  entity_types: [system, component, decision, incident, person, requirement]
+  # corpus: notícias e postmortems de incidentes (CrowdStrike 2024, Cloudflare 2025)
+  entity_types: [organization, person, system, component, incident, event]
   max_gleanings: 1
 
 summarize_descriptions:
