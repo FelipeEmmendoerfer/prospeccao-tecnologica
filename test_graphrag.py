@@ -107,8 +107,8 @@ def check_graphrag_modules():
     modules = [
         "graphrag.index",
         "graphrag.query",
-        "graphrag.index.cli",
-        "graphrag.query.cli"
+        "graphrag.cli.index",  # GraphRAG 3.x: a CLI fica em graphrag.cli
+        "graphrag.cli.query"
     ]
     
     all_ok = True

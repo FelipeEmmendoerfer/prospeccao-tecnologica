@@ -1,4 +1,42 @@
-# GraphRAG Interface
+# Prospecção Tecnológica: GraphRAG vs RAG
+
+Trabalho de prospecção tecnológica da disciplina de Engenharia de Software. Ele mede, num experimento controlado e 100% local, **em que tipos de pergunta o GraphRAG responde melhor que o RAG vetorial, e quanto isso custa**. O relatório completo está em [`docs/Relatorio_Prospeccao_GraphRAG_vs_RAG.pdf`](docs/Relatorio_Prospeccao_GraphRAG_vs_RAG.pdf) (fonte editável em `docs/Configuracao_Experimento_GraphRAG_vs_RAG.docx`).
+
+## O experimento
+
+- **Métodos comparados:** modelo sem recuperação, RAG vetorial (busca Basic) e GraphRAG (buscas Local e Global), todos com o mesmo modelo local (`qwen3.5:4b`) e os mesmos embeddings (`nomic-embed-text`).
+- **Corpus:** dois relatos reais de incidentes de software, a falha da CrowdStrike (2024) e a interrupção da Cloudflare (2025), traduzidos para o português (`benchmark/corpus_pequeno/`). O teste foi repetido num corpus cerca de três vezes maior, com 12 artigos da Wikipedia como distratores (`benchmark/corpus_grande/`). Fontes e licenças em [`docs/corpus_fontes.md`](docs/corpus_fontes.md).
+- **Perguntas:** 10 perguntas com gabarito escrito antes dos testes (pontuais, multi-hop, globais e uma sem resposta), em `benchmark/perguntas.csv`.
+- **Avaliação:** nota de 0 a 2 por resposta, dada numa planilha embaralhada sem a indicação do método (`benchmark/avaliacao_cega_*.csv`).
+
+| Método | Nota média (corpus pequeno → grande) | Latência média (pequeno → grande) |
+|---|---|---|
+| Sem recuperação | 0,7 → 0,7 | 4 s → 4 s |
+| RAG vetorial (Basic) | **1,9 → 1,6** | 20 s → 23 s |
+| GraphRAG Local | 1,8 → 1,1 | 21 s → 22 s |
+| GraphRAG Global | 1,1 → 0,8 | 45 s → 105 s |
+
+A indexação do GraphRAG levou 26,7 min no corpus pequeno e 113,7 min no grande. **O RAG vetorial venceu nos dois corpora**; o GraphRAG só resistiu melhor nas perguntas multi-hop do corpus grande. A análise e as limitações estão nos blocos 3 e 6 do relatório.
+
+### Reproduzir o experimento
+
+```bash
+# 1. Copiar o corpus desejado para a entrada do GraphRAG
+cp benchmark/corpus_pequeno/*.txt ragtest/input/
+
+# 2. Indexar do zero (apague ragtest/output e ragtest/cache antes)
+python -m graphrag index --root ragtest
+
+# 3. Métricas de custo da indexação
+python benchmark/metricas_indexacao.py
+
+# 4. Rodar as 10 perguntas nos 4 métodos
+python benchmark/benchmark.py --saida resultados.csv
+```
+
+---
+
+## A aplicação
 
 Um sistema completo de **Recuperação Aumentada por Grafos de Conhecimento** (Graph-based Retrieval Augmented Generation) com interface web interativa. O projeto combina o poder do Microsoft GraphRAG com modelos de linguagem locais via Ollama, oferecendo uma experiência de busca semântica avançada sobre documentos de texto, com visualização interativa do grafo de conhecimento no estilo Gephi.
 
@@ -73,8 +111,8 @@ ollama pull nomic-embed-text
 ### 1. Clonar o repositório
 
 ```bash
-git clone https://github.com/FelipeEmmendoerfer/GraphRag_App.git
-cd GraphRag_App
+git clone https://github.com/FelipeEmmendoerfer/prospeccao-tecnologica.git
+cd prospeccao-tecnologica
 ```
 
 ### 2. Criar ambiente virtual
@@ -217,9 +255,13 @@ base = "dark"
 
 Arquivos maiores e mais detalhados geram grafos mais ricos, com mais entidades e relacionamentos. Porém, há um trade-off:
 
-- **Arquivos pequenos (< 5 KB):** Indexação rápida (1-3 min), poucos nós no grafo
-- **Arquivos médios (5-50 KB):** Indexação moderada (3-10 min), grafo bem conectado
-- **Arquivos grandes (> 50 KB):** Indexação lenta (10-30+ min), grafo denso e detalhado
+Tempos medidos neste trabalho, com `qwen3.5:4b` numa RTX 4060 Laptop (8 GB):
+
+- **3,9 KB (teste de fumaça):** cerca de 9,5 min, 27 entidades
+- **36 KB (corpus pequeno):** cerca de 27 min, 162 entidades e 36 comunidades
+- **118 KB (corpus grande):** cerca de 114 min, 794 entidades e 163 comunidades
+
+O custo cresce mais rápido que o texto, porque depende do número de entidades e comunidades.
 
 O tempo de indexação depende diretamente da capacidade da sua GPU/CPU e do modelo utilizado. Modelos pequenos (como `qwen3.5:4b`) são mais rápidos mas podem perder algumas entidades sutis.
 
@@ -239,15 +281,24 @@ O sistema aceita apenas `.txt` por design. Esses formatos garantem que o texto c
 ## Estrutura do Projeto
 
 ```
-GraphRag_App/
-├── app.py                    # Interface Streamlit principal (v3.3.0)
-├── engine.py                 # Motor de busca GraphRAG
+prospeccao-tecnologica/
+├── app.py                    # Interface Streamlit principal
+├── engine.py                 # Chamada das buscas do GraphRAG (subprocesso)
 ├── indexer.py                # Gerenciador de indexação e arquivos
 ├── graph_visualizer.py       # Extrator de dados do grafo para visualização
-├── verify.py                 # Script de verificação do ambiente
+├── verify.py                 # Verificação do ambiente
+├── test_graphrag.py          # Diagnóstico de cada componente do pipeline
 ├── requirements.txt          # Dependências Python
-├── docs/                     # Documentação complementar (guias, troubleshooting, histórico de correções)
-├── input/                    # Documentos para análise (.txt)
+├── benchmark/                # Experimento: perguntas, scripts, corpora, resultados e notas
+│   ├── perguntas.py / perguntas.csv
+│   ├── benchmark.py          # Roda as perguntas nos 4 métodos e mede o tempo
+│   ├── metricas_indexacao.py # Custos da indexação (tempo, chamadas ao LLM, grafo)
+│   ├── corpus_pequeno/ e corpus_grande/
+│   ├── resultados*.csv e avaliacao_cega_*.csv
+│   └── indexacao_*/          # stats.json e logs das indexações registradas no relatório
+├── docs/                     # Relatório (PDF e DOCX), fontes do corpus e histórico do projeto original
+├── exemplos/                 # Texto fictício usado no teste de fumaça
+├── input/                    # Documentos para análise pelo app (.txt)
 └── ragtest/                  # Diretório raiz do GraphRAG
     ├── settings.yaml         # Configuração do pipeline
     ├── input/                # Cópia dos documentos para indexação
@@ -270,9 +321,17 @@ Edite `ragtest/settings.yaml`:
 completion_models:
   default_completion_model:
     model_provider: ollama
-    model: llama3:8b  # ou qualquer modelo disponível no Ollama
+    model: qwen3.5:4b  # ou outro modelo disponível no Ollama
+    call_args:          # no GraphRAG 3.x, só o que está aqui chega ao modelo
+      temperature: 0
+      max_tokens: 4000
+      num_ctx: 12288
+      reasoning_effort: none
+      timeout: 1800
     api_base: http://localhost:11434
 ```
+
+Com modelos locais, mantenha `concurrent_requests: 2` (o padrão de 25 enfileira chamadas demais no Ollama e causa tempo esgotado) e `cluster_graph.use_lcc: false` (o padrão descarta as partes do grafo que não estão ligadas ao maior componente).
 
 ### Ajustar chunking
 
@@ -287,11 +346,12 @@ chunking:
 
 ### Tipos de entidades
 
-Por padrão, o sistema extrai: `organization`, `person`, `geo`, `event`. Para adicionar tipos customizados:
+O padrão do GraphRAG é `organization`, `person`, `geo`, `event`. Este projeto usa tipos adequados a relatos de incidentes:
 
 ```yaml
 extract_graph:
-  entity_types: [organization, person, geo, event, technology, concept]
+  entity_types: [organization, person, system, component, incident, event]
+  max_gleanings: 1
 ```
 
 ---
@@ -366,7 +426,7 @@ pip install -r requirements.txt --upgrade --force-reinstall
 
 | Tecnologia | Versão | Papel |
 |---|---|---|
-| Microsoft GraphRAG | 3.0+ | Pipeline de extração e busca |
+| Microsoft GraphRAG | 3.3.0 | Pipeline de extração e busca |
 | Streamlit | 1.28+ | Interface web |
 | Pyvis | 0.3.2+ | Visualização de grafos (vis.js) |
 | NetworkX | 3.0+ | Análise de grafos |
@@ -388,18 +448,17 @@ Projeto desenvolvido como ferramenta de aprendizado e experimentação com Graph
 
 ## Licença
 
-MIT License — veja [LICENSE.md](LICENSE.md)
+Projeto acadêmico, sem licença de software definida. Os textos do corpus têm licenças próprias, listadas em [`docs/corpus_fontes.md`](docs/corpus_fontes.md).
 
 ---
 
 ## Recursos e Referências
 
-Documentação complementar do projeto (pasta [`docs/`](docs/)):
+Documentação do projeto (pasta [`docs/`](docs/)):
 
-- [Guia rápido](docs/QUICKSTART.md)
-- [Troubleshooting da indexação](docs/TROUBLESHOOTING_INDEXING.md)
-- [Guia de push para o GitHub](docs/GITHUB_PUSH_GUIDE.md)
-- [Correções realizadas](docs/CORRECTIONS.md) e [correções aplicadas](docs/FIXES_APPLIED.md)
+- [Relatório da prospecção (PDF)](docs/Relatorio_Prospeccao_GraphRAG_vs_RAG.pdf)
+- [Fontes e licenças do corpus](docs/corpus_fontes.md)
+- [Documentos do projeto original](docs/historico/), mantidos só como histórico
 
 Referências externas:
 

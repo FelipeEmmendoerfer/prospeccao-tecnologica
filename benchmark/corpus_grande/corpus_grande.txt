@@ -1,0 +1,887 @@
+Falhas de TI relacionadas à CrowdStrike em 2024
+
+Em 19 de julho de 2024, a empresa americana de cibersegurança CrowdStrike distribuiu uma atualização defeituosa para o seu software de segurança Falcon Sensor, o que causou problemas generalizados em computadores com Microsoft Windows que executavam esse software. Como resultado, cerca de 8,5 milhões de sistemas travaram e não conseguiram reiniciar corretamente, no que foi chamado de a maior interrupção da história da tecnologia da informação e de "histórica em escala".
+
+A interrupção afetou o dia a dia, empresas e governos no mundo todo. Muitos setores foram atingidos: companhias aéreas, aeroportos, bancos, hotéis, hospitais, indústrias, bolsas de valores, emissoras de TV, postos de combustível, lojas de varejo e serviços governamentais, como serviços de emergência e sites. O prejuízo financeiro mundial foi estimado em dezenas de bilhões.
+
+Em poucas horas o erro foi descoberto e uma correção foi liberada, mas, como muitos computadores afetados precisavam ser consertados manualmente, as interrupções continuaram em muitos serviços.
+
+Contexto
+
+A CrowdStrike produz um conjunto de produtos de segurança para empresas, criados para proteger computadores contra ataques cibernéticos. O Falcon Sensor, agente de detecção e resposta em endpoints (EDR) da CrowdStrike, funciona no nível do kernel do sistema operacional de cada computador para detectar e impedir ameaças. A CrowdStrike distribui atualizações rotineiramente aos seus clientes para que os computadores consigam lidar com novas ameaças.
+
+A falha
+
+Em 19 de julho de 2024, às 04:09 UTC, a CrowdStrike distribuiu uma atualização de configuração defeituosa para o Falcon Sensor em PCs e servidores Windows. Uma modificação no arquivo de configuração responsável por inspecionar named pipes, o Channel File 291, provocou uma leitura de memória fora dos limites no cliente do Falcon Sensor para Windows, o que resultou em uma falha de página inválida. A atualização fez as máquinas entrarem em um ciclo de reinicialização (bootloop) ou iniciarem em modo de recuperação.
+
+Quase imediatamente, máquinas virtuais Windows na plataforma de nuvem Microsoft Azure começaram a reiniciar e travar e, às 06:48 UTC, o Google Compute Engine também relatou o problema. O problema afetou sistemas com Windows 10 e Windows 11 que executavam o Falcon Sensor. A maioria dos PCs Windows pessoais não foi afetada, porque o software da CrowdStrike era usado principalmente por organizações, e não em pequenos escritórios e residências. O software da CrowdStrike não oferecia aos clientes uma forma de adiar a instalação dos seus arquivos de conteúdo. Computadores com macOS e Linux não foram afetados, porque o arquivo de conteúdo problemático era apenas para Windows, mas problemas parecidos já tinham afetado as versões para Linux do software da CrowdStrike em abril de 2024.
+
+A CrowdStrike reverteu a atualização de conteúdo às 05:27 UTC, e os dispositivos que iniciaram depois da reversão não foram afetados.
+
+Às 07:15 UTC, o Google afirmou que a atualização da CrowdStrike era a causa. Em poucas horas, o CEO da CrowdStrike, George Kurtz, confirmou que a atualização defeituosa do arquivo de configuração de kernel da CrowdStrike tinha causado o problema. Às 09:45 UTC, George Kurtz confirmou que a correção tinha sido implantada e que o problema não era resultado de um ataque cibernético.
+
+O impacto sobre empresas da região central dos Estados Unidos foi agravado por uma interrupção não relacionada do Microsoft Azure no dia anterior. Em 18 de julho, a plataforma Microsoft Azure teve uma falha que bloqueou o acesso de algumas empresas ao seu armazenamento e aos aplicativos do Microsoft 365 na região Central US do Azure.
+
+Correção
+
+As máquinas afetadas podiam ser recuperadas reiniciando-as enquanto conectadas à rede, de preferência por cabo Ethernet, o que dava a oportunidade de baixar o arquivo de canal revertido; segundo relatos, eram necessárias várias reinicializações.
+
+Se os travamentos continuassem, a correção exigia iniciar o computador em modo de segurança ou no Ambiente de Recuperação do Windows e apagar qualquer arquivo .sys que começasse com C-00000291- e tivesse horário 04:09 UTC no diretório %windir%\System32\drivers\CrowdStrike\. Como esse processo precisava ser feito localmente em cada máquina, a previsão era de que as empresas afetadas levassem dias para restaurar todos os sistemas. As equipes técnicas precisavam reiniciar os computadores um por um, com intervenção manual em cada sistema.
+
+Em dispositivos com a criptografia de disco BitLocker do Windows ativada, que as empresas costumam usar para aumentar a segurança, o problema se agravava, porque as chaves de recuperação do BitLocker, de 48 dígitos e únicas para cada sistema, precisavam ser digitadas manualmente, com dificuldades adicionais para entregá-las a usuários em trabalho remoto. Além disso, várias organizações que guardavam as chaves de recuperação do BitLocker em servidores locais não conseguiam acessá-las, porque esses servidores também tinham travado.
+
+A Microsoft também recomendou restaurar um backup anterior a 18 de julho para resolver o problema.
+
+Impacto
+
+Houve interrupções no mundo todo, refletindo o amplo uso do Microsoft Windows e do software da CrowdStrike por corporações globais de vários setores. Na época do incidente, a CrowdStrike dizia ter mais de 24.000 clientes, incluindo quase 60% das empresas da Fortune 500 e mais da metade das empresas da Fortune 1000. Em 20 de julho, a Microsoft estimou que 8,5 milhões de dispositivos foram afetados pela atualização, o que, segundo ela, representava menos de um por cento de todos os dispositivos Windows.
+
+Às 04:09 UTC de 19 de julho, horário em que a atualização defeituosa foi liberada, era meio do expediente na Oceania e na Ásia, madrugada na Europa e meia-noite em grande parte das Américas.
+
+Alguns países foram menos afetados. A China, que busca autossuficiência em TI, não teve impacto nos serviços do dia a dia, incluindo companhias aéreas e bancos, embora algumas filiais de empresas estrangeiras e hotéis de luxo no país tenham sido afetados. A Rússia e o Irã, ambos impedidos por sanções internacionais de usar serviços de empresas americanas de alta tecnologia, não relataram interrupções.
+
+A empresa de quantificação de risco cibernético Kovrr calculou que o custo total para a economia do Reino Unido provavelmente ficaria entre 1,7 e 2,3 bilhões de libras (2,18 a 2,96 bilhões de dólares).
+
+A seguradora Parametrix, especializada em interrupções de nuvem, estimou que as 500 maiores empresas dos Estados Unidos em receita, excluindo a Microsoft, tiveram cerca de 5,4 bilhões de dólares em perdas financeiras por causa da interrupção, mas apenas entre 540 milhões e 1,08 bilhão de dólares dessas perdas seriam cobertos por seguro.
+
+Responsabilidade da CrowdStrike
+
+Os termos e condições da própria CrowdStrike para o Falcon Sensor limitam a responsabilidade da empresa aos "valores pagos", o que na prática equivale a um reembolso. Clientes maiores podem ter negociado termos diferentes.
+
+Na União Europeia, é possível que a CrowdStrike seja responsabilizada com base no GDPR, o regulamento de proteção de dados, que trata do impacto de incidentes de segurança sobre dados de usuários. O regulamento é mais conhecido por vazamentos de dados, mas também se aplica à destruição de dados. Não está claro se a perda temporária de acesso aos dados basta para gerar responsabilidade.
+
+Transporte aéreo nos Estados Unidos
+
+Na manhã da sexta-feira, 19 de julho, a United Airlines, a Delta Air Lines e a American Airlines suspenderam as decolagens (ground stop), permitindo apenas que os aviões já em voo chegassem aos seus destinos. A Allegiant Air também ficou em solo por causa da interrupção. Por volta das 10h30 no horário do leste dos Estados Unidos, a agência AP informou que cerca de 1.500 voos já tinham sido cancelados no país. A American Airlines, a United Airlines e a Allegiant Air se recuperaram relativamente rápido depois da sexta-feira.
+
+A Delta Air Lines, porém, a mais afetada entre as grandes companhias aéreas americanas, sofreu um colapso operacional que se estendeu pelo fim de semana. A companhia cancelou mais de 1.200 voos na sexta-feira. Milhares de viajantes ficaram presos e passaram a noite no Aeroporto Internacional Hartsfield-Jackson de Atlanta, o maior hub da Delta Air Lines e o aeroporto mais movimentado do mundo em número de passageiros. Sem aviso, a Delta Air Lines proibiu menores desacompanhados em seus voos até o fim de 23 de julho.
+
+A Delta Air Lines cancelou mais de 1.400 voos em 20 de julho e mais de 1.300 em 21 de julho. Com muitos passageiros ainda presos no aeroporto de Atlanta depois de duas noites seguidas, o aeroporto acionou um "plano de crise de concessões" e um plano para devolver aos passageiros as bagagens despachadas.
+
+Em 21 de julho, o CEO da Delta Air Lines, Ed Bastian, pediu desculpas aos clientes em um comunicado e revelou que a interrupção tinha deixado um dos programas de rastreamento de tripulação da companhia "incapaz de processar com eficácia o número sem precedentes de mudanças provocadas pelo desligamento dos sistemas". O diretor de TI (CIO) da Delta Air Lines, Rahul Samant, disse que o programa voltou a funcionar por volta das 11h de 19 de julho, mas ficou sobrecarregado pelo acúmulo de atualizações à espera de processamento e desde então tentava se atualizar. Como a suspensão das decolagens deixou muitos tripulantes nos lugares errados, a Delta Air Lines teve dificuldade para reunir pilotos e comissários suficientes nos portões para operar os voos programados. Muitos voos foram adiados repetidamente e por fim cancelados, porque os poucos tripulantes que chegavam ao portão de um voo atingiam o limite legal de horas de trabalho antes que a companhia conseguisse completar a tripulação. Isso fez a crise crescer como uma bola de neve, já que esses tripulantes e seus aviões ficavam no lugar errado para os voos do dia seguinte. No mesmo dia, o Secretário de Transportes dos Estados Unidos, Pete Buttigieg, disse nas redes sociais que o Departamento de Transportes dos Estados Unidos tinha recebido centenas de reclamações sobre a Delta Air Lines e lembrou a companhia das suas obrigações legais com os passageiros afetados.
+
+Em 22 de julho, a Delta Air Lines cancelou mais de 1.200 voos. Em 23 de julho, o Departamento de Transportes dos Estados Unidos anunciou uma investigação formal sobre o tratamento dado pela Delta Air Lines aos passageiros. Nesse dia, Pete Buttigieg estimou que mais de 500.000 passageiros tinham sido afetados pelos cancelamentos da Delta Air Lines.
+
+Em 25 de julho, a Delta Air Lines voltou à operação normal, depois de cancelar mais de 7.000 voos; os passageiros tinham registrado mais de 5.000 reclamações contra a companhia no Departamento de Transportes dos Estados Unidos. Em 26 de julho, o jornal The Washington Post informou que o departamento investigava comunicações supostamente enganosas da Delta Air Lines, que ofereciam apenas créditos para voos futuros como compensação pelos voos cancelados e não informavam claramente aos passageiros o seu direito legal a reembolso em dinheiro.
+
+Em 31 de julho, Ed Bastian disse que a interrupção tinha custado 500 milhões de dólares à Delta Air Lines e que a companhia processaria a CrowdStrike para recuperar parte das perdas. Em 8 de agosto, a Delta Air Lines confirmou, em documento enviado à Securities and Exchange Commission (SEC), que mais de 7.000 voos foram cancelados ao longo de cinco dias e estimou as perdas em 380 milhões de dólares em receita perdida e 170 milhões de dólares em despesas, somando cerca de 550 milhões de dólares. A Delta Air Lines também estimou que cerca de 1,3 milhão de passageiros foram afetados pelos cancelamentos.
+
+A Southwest Airlines, terceira maior companhia aérea dos Estados Unidos em passageiros domésticos, não foi afetada. Um porta-voz da Southwest Airlines confirmou que a companhia não teve impacto da interrupção da CrowdStrike, mas se recusou a confirmar a especulação de analistas do setor de que ela teria sido protegida por seu software notoriamente desatualizado.
+
+Resposta
+
+Em entrevista ao vivo no programa Today, da NBC, o CEO da CrowdStrike, George Kurtz, pediu desculpas ao público. Ele disse que os líderes da empresa estavam "profundamente arrependidos pelo impacto que causamos aos clientes, aos viajantes e a qualquer pessoa afetada". A CrowdStrike alertou que agentes mal-intencionados poderiam tentar se passar por funcionários da empresa ou por pesquisadores independentes que alegassem ajudar a resolver o problema.
+
+O governo do presidente dos Estados Unidos, Joe Biden, entrou em contato com a CrowdStrike para oferecer ajuda e, em 23 de julho, George Kurtz foi convidado a depor no Congresso para explicar como a interrupção ocorreu e o que a CrowdStrike estava fazendo para evitar incidentes futuros.
+
+A CrowdStrike ganhou o Pwnie Award de 2024 na categoria Most Epic Fail ("falha mais épica"), recebido pessoalmente pelo presidente da CrowdStrike, Michael Sentonas, na cerimônia anual da conferência DEF CON.
+
+Processo judicial
+
+Em outubro de 2024, a Delta Air Lines entrou com um processo de 500 milhões de dólares no estado da Geórgia contra a CrowdStrike, alegando negligência grave, quebra de contrato, invasão de sistema computacional e práticas comerciais enganosas. A Delta Air Lines afirmou que a CrowdStrike implantou atualizações de software não testadas, sem o consentimento adequado e sem testes suficientes.
+
+A CrowdStrike entrou com um processo contra a Delta Air Lines, argumentando que os danos deveriam ser limitados pelo contrato e que a lei da Geórgia impede ações de responsabilidade civil por perdas econômicas quando existe um contrato. A CrowdStrike negou responsabilidade pelos atrasos na recuperação da Delta Air Lines.
+
+Em maio de 2025, um juiz da Geórgia permitiu que a Delta Air Lines prosseguisse com as acusações de negligência grave, invasão de sistema computacional e fraude limitada envolvendo suposto acesso não autorizado aos sistemas. O juiz, porém, rejeitou as acusações mais amplas de fraude, decidindo que os possíveis danos podem ser limitados pelo contrato. A CrowdStrike sustentou que a sua responsabilidade provavelmente não passaria de "poucos milhões de dólares".
+
+Separadamente, uma ação coletiva federal de passageiros contra a Delta Air Lines foi autorizada a prosseguir, alegando que a companhia reteve reembolsos de forma ilegal e não ofereceu compensação adequada pela interrupção.
+
+Reação do setor
+
+O consultor de cibersegurança Troy Hunt chamou o incidente de "a maior interrupção de TI da história", acrescentando que aquilo era basicamente o que todos temiam com o bug do milênio (Y2K), só que desta vez tinha acontecido de verdade.
+
+Análise da causa
+
+A atualização de 19 de julho era uma instância de um modelo (template) que tinha sido testado e liberado em março de 2024 como parte de uma atualização do Falcon Sensor. Essa nova instância, o Channel File 291, passou na validação por causa de um bug no software de verificação de conteúdo da CrowdStrike. O próprio Falcon Sensor interpreta o arquivo de forma diferente, o que levou a uma falha do software em modo kernel.
+
+Centralização e homogeneidade
+
+A interrupção levantou questões sobre oligopólio e centralização no setor de tecnologia da informação. A maioria dos computadores do mundo usa Microsoft Windows, criando uma monocultura que reduz a resiliência. O especialista em cibersegurança Ciaran Martin disse que o episódio era uma ilustração muito desconfortável da fragilidade da infraestrutura central da internet no mundo. O especialista em infraestrutura crítica Gregory Falco disse que os fornecedores de cibersegurança fazem parte da espinha dorsal homogênea dos sistemas modernos e que uma falha nas suas operações tem impacto semelhante ao de falhas em sistemas muito conhecidos. Especialistas em segurança sugeriram mais redundância para evitar pontos únicos de falha e o uso mais amplo de sistemas descentralizados e heterogêneos. Por outro lado, o especialista em cibersegurança Andrew Plato argumentou que as monoculturas são positivas no saldo, porque, do ponto de vista da segurança, usar um conjunto menor e padronizado de software permite identificar um problema de forma mais rápida e fácil.
+
+Práticas de TI
+
+Especialistas suspeitam que a atualização não passou pelos procedimentos rotineiros de gestão de atualizações (patch management), como testar a atualização em um ambiente isolado (sandbox) para verificar que não havia problemas.
+
+Também foi sugerido tornar obrigatória a divulgação de violações e vulnerabilidades. Em entrevista à revista Wired, o consultor de cibersegurança Jake Williams disse que a interrupção mostrou por que enviar atualizações sem intervenção da equipe de TI é insustentável e que as pessoas poderiam passar a exigir mudanças nesse modelo de operação.
+
+Projeto do sistema operacional
+
+A Microsoft culpou um acordo antitruste de 2009 com a União Europeia, que, segundo ela, a obrigou a manter o acesso de baixo nível ao kernel para desenvolvedores terceiros. O documento não afirma explicitamente que a Microsoft precisa dar acesso ao kernel, mas diz que a Microsoft deve fornecer acesso às mesmas APIs usadas pelos seus próprios produtos de segurança. A União Europeia rejeitou as alegações.
+
+No Linux, é possível usar o eBPF em vez de módulos de kernel para programar esse tipo de software.
+
+Desde o macOS Catalina, de 2019, esse tipo de software pode usar o Endpoint Security Framework em vez de uma extensão de kernel, e essa abordagem vem sendo gradualmente imposta nos sistemas da Apple.
+
+
+Interrupção da Cloudflare em 18 de novembro de 2025
+
+Relato publicado por Matthew Prince no blog da Cloudflare. Todos os horários estão em UTC.
+
+Em 18 de novembro de 2025, às 11:20 UTC, a rede da Cloudflare começou a apresentar falhas graves na entrega do tráfego principal. Para os usuários da internet que tentavam acessar os sites dos clientes da Cloudflare, isso aparecia como uma página de erro indicando uma falha dentro da rede da Cloudflare.
+
+O problema não foi causado, direta ou indiretamente, por um ataque cibernético ou por qualquer tipo de atividade maliciosa. Ele foi provocado por uma mudança nas permissões de um dos sistemas de banco de dados da Cloudflare, que fez o banco de dados gravar entradas repetidas em um "arquivo de features" (feature file) usado pelo sistema Bot Management. Esse arquivo de features, por sua vez, dobrou de tamanho. O arquivo, maior do que o esperado, foi então propagado para todas as máquinas que formam a rede da Cloudflare.
+
+O software que roda nessas máquinas para rotear o tráfego pela rede lê esse arquivo de features para manter o Bot Management atualizado contra ameaças que mudam o tempo todo. O software tinha um limite para o tamanho do arquivo de features que era menor que o tamanho dobrado. Isso fez o software falhar.
+
+No início, a equipe suspeitou, de forma errada, que os sintomas eram causados por um ataque DDoS de escala gigantesca. Depois identificou corretamente o problema central, conseguiu interromper a propagação do arquivo de features maior que o esperado e substituí-lo por uma versão anterior do arquivo. Por volta das 14:30, o tráfego principal já fluía normalmente na maior parte da rede. Nas horas seguintes, a equipe trabalhou para reduzir a carga elevada em várias partes da rede, à medida que o tráfego voltava. Às 17:06, todos os sistemas da Cloudflare estavam funcionando normalmente.
+
+A Cloudflare pediu desculpas pelo impacto causado aos seus clientes e à internet em geral e afirmou que, dada a importância da Cloudflare no ecossistema da internet, qualquer interrupção de qualquer um dos seus sistemas é inaceitável.
+
+A interrupção
+
+Antes das 11:20, o volume de erros HTTP 5xx na rede da Cloudflare estava no nível normal, que é muito baixo. A partir desse horário houve um pico, seguido de oscilações, que mostram o sistema falhando por carregar o arquivo de features incorreto. O que chamou a atenção foi que o sistema se recuperava por um período e depois voltava a falhar, um comportamento muito incomum para um erro interno.
+
+A explicação era que o arquivo era gerado a cada cinco minutos por uma consulta executada em um cluster de banco de dados ClickHouse, que estava sendo atualizado aos poucos para melhorar a gestão de permissões. Os dados ruins só eram gerados se a consulta rodasse em uma parte do cluster que já tinha sido atualizada. Assim, a cada cinco minutos havia a chance de ser gerado e rapidamente propagado pela rede um conjunto bom ou um conjunto ruim de arquivos de configuração.
+
+Essa oscilação deixou pouco claro o que estava acontecendo, porque o sistema inteiro se recuperava e depois falhava de novo, conforme arquivos de configuração bons ou ruins eram distribuídos para a rede. No início, isso levou a equipe a acreditar que poderia ser um ataque. Por fim, todos os nós do ClickHouse passaram a gerar o arquivo de configuração ruim, e a oscilação se estabilizou no estado de falha.
+
+Os erros continuaram até que o problema de fundo foi identificado e resolvido, a partir das 14:30. A solução foi interromper a geração e a propagação do arquivo de features ruim, inserir manualmente um arquivo sabidamente bom na fila de distribuição do arquivo de features e, em seguida, forçar a reinicialização do proxy central.
+
+Depois disso, a equipe reiniciou os serviços restantes que tinham entrado em estado ruim, e o volume de erros 5xx voltou ao normal às 17:06.
+
+Serviços afetados
+
+Serviços centrais de CDN e segurança: retornaram códigos de status HTTP 5xx aos usuários finais.
+
+Turnstile: o Turnstile não carregava.
+
+Workers KV: o Workers KV retornou um nível bem mais alto de erros HTTP 5xx, porque as requisições ao gateway de entrada ("front end") do Workers KV falhavam devido à falha do proxy central.
+
+Dashboard: embora o painel de controle (Dashboard) estivesse em grande parte operacional, a maioria dos usuários não conseguia fazer login, porque o Turnstile estava indisponível na página de login.
+
+Email Security: o processamento e a entrega de e-mails não foram afetados, mas houve perda temporária de acesso a uma fonte de reputação de IPs, o que reduziu a precisão da detecção de spam e impediu que algumas detecções de domínios recém-criados fossem acionadas, sem impacto crítico observado nos clientes. Também houve falhas em algumas ações de Auto Move; todas as mensagens afetadas foram revisadas e corrigidas.
+
+Access: as falhas de autenticação foram generalizadas para a maioria dos usuários, desde o início do incidente até o início do rollback, às 13:05. Sessões do Access que já existiam não foram afetadas. Todas as tentativas de autenticação que falharam resultaram em uma página de erro, ou seja, nenhum desses usuários chegou ao aplicativo de destino enquanto a autenticação falhava. Atualizações de configuração do Access feitas nesse período falharam ou se propagaram muito lentamente; todas já foram recuperadas.
+
+Além dos erros HTTP 5xx, houve aumento significativo na latência das respostas da CDN durante o período de impacto. Isso aconteceu porque os sistemas de depuração e observabilidade consumiram grande quantidade de CPU, já que eles enriquecem automaticamente os erros não tratados com informações adicionais de depuração.
+
+Como a Cloudflare processa as requisições e o que deu errado
+
+Toda requisição à Cloudflare percorre um caminho bem definido pela rede. Ela pode vir de um navegador carregando uma página, de um aplicativo móvel chamando uma API ou de tráfego automatizado de outro serviço. Essas requisições primeiro terminam na camada HTTP e TLS, depois passam pelo sistema de proxy central, chamado internamente de FL ("Frontline"), e por fim pelo Pingora, que faz consultas ao cache ou busca os dados na origem quando necessário.
+
+Enquanto a requisição passa pelo proxy central, são executados os vários produtos de segurança e desempenho da rede. O proxy aplica a configuração de cada cliente, desde regras do WAF e proteção contra DDoS até o roteamento do tráfego para a Developer Platform e o R2. Ele faz isso por meio de um conjunto de módulos específicos que aplicam as regras de configuração e de política ao tráfego.
+
+Um desses módulos, o Bot Management, foi a origem da interrupção.
+
+O Bot Management da Cloudflare inclui, entre outros sistemas, um modelo de aprendizado de máquina que gera uma pontuação de bot (bot score) para cada requisição que passa pela rede. Os clientes usam essa pontuação para controlar quais bots podem ou não acessar os seus sites.
+
+O modelo recebe como entrada um arquivo de configuração de features. Uma feature, nesse contexto, é uma característica individual usada pelo modelo de aprendizado de máquina para prever se a requisição foi automatizada ou não. O arquivo de configuração de features é uma coleção dessas features.
+
+Esse arquivo de features é atualizado a cada poucos minutos e publicado para toda a rede, o que permite reagir a variações no tráfego da internet, a novos tipos de bots e a novos ataques de bots. Por isso, é essencial que ele seja distribuído com frequência e rapidez, já que os agentes mal-intencionados mudam de tática rapidamente.
+
+Uma mudança no comportamento da consulta ao ClickHouse que gera esse arquivo fez com que ele tivesse um grande número de linhas de features duplicadas. Isso mudou o tamanho do arquivo de configuração de features, que antes era fixo, e fez o módulo Bot Management gerar um erro.
+
+Como resultado, o sistema de proxy central, que processa o tráfego dos clientes, retornou erros HTTP 5xx para todo o tráfego que dependia do módulo Bot Management. Isso também afetou o Workers KV e o Access, que dependem do proxy central.
+
+Sem relação com este incidente, a Cloudflare estava migrando o tráfego dos clientes para uma nova versão do serviço de proxy, chamada internamente de FL2. As duas versões foram afetadas pelo problema, mas o impacto foi diferente.
+
+Clientes que estavam no novo proxy FL2 receberam erros HTTP 5xx. Clientes no proxy antigo, o FL, não viram erros, mas as pontuações de bot não foram geradas corretamente, e todo o tráfego recebeu pontuação de bot zero. Clientes que tinham regras para bloquear bots tiveram um grande número de falsos positivos. Clientes que não usavam a pontuação de bot nas suas regras não tiveram impacto.
+
+Outro sintoma aparente confundiu a equipe e a fez acreditar que poderia ser um ataque: a página de status da Cloudflare saiu do ar. A página de status é hospedada totalmente fora da infraestrutura da Cloudflare, sem nenhuma dependência dela. Embora tenha sido uma coincidência, isso levou parte da equipe que investigava o problema a acreditar que um atacante poderia estar mirando tanto os sistemas quanto a página de status da Cloudflare. No chat interno do incidente, a equipe temia que fosse a continuação da recente onda de ataques DDoS de alto volume conhecidos como Aisuru.
+
+A mudança no comportamento da consulta
+
+O sistema de banco de dados em questão usa o software ClickHouse. Um cluster ClickHouse é formado por muitos shards. Para consultar dados de todos os shards, a Cloudflare usa as chamadas tabelas distribuídas (movidas pelo mecanismo de tabela Distributed) em um banco de dados chamado default. O mecanismo Distributed consulta as tabelas subjacentes em um banco de dados chamado r0. As tabelas subjacentes são onde os dados ficam guardados em cada shard do cluster ClickHouse.
+
+As consultas às tabelas distribuídas rodam por meio de uma conta de sistema compartilhada. Como parte dos esforços para melhorar a segurança e a confiabilidade das consultas distribuídas, havia um trabalho em andamento para que elas rodassem com as contas dos usuários que as iniciaram.
+
+Antes do incidente, os usuários do ClickHouse só viam as tabelas do banco default ao consultar metadados de tabelas nas tabelas de sistema do ClickHouse, como system.tables ou system.columns.
+
+Como os usuários já tinham acesso implícito às tabelas subjacentes em r0, a Cloudflare fez uma mudança às 11:05 para tornar esse acesso explícito, de modo que os usuários também pudessem ver os metadados dessas tabelas. Garantindo que todas as subconsultas distribuídas rodassem com o usuário que as iniciou, os limites de consulta e as permissões de acesso poderiam ser avaliados de forma mais detalhada, evitando que uma subconsulta ruim de um usuário afetasse os outros.
+
+Com essa mudança, todos os usuários passaram a ver metadados corretos sobre as tabelas a que tinham acesso. Infelizmente, no passado tinha sido feita a suposição de que a lista de colunas retornada por uma consulta como a abaixo incluiria apenas o banco de dados default:
+
+SELECT name, type FROM system.columns WHERE table = 'http_requests_features' order by name;
+
+A consulta não filtra pelo nome do banco de dados. À medida que as permissões explícitas eram liberadas gradualmente aos usuários de um cluster ClickHouse, depois da mudança das 11:05 a consulta passou a retornar colunas "duplicadas", porque elas eram das tabelas subjacentes guardadas no banco r0.
+
+Esse era exatamente o tipo de consulta que a lógica de geração do arquivo de features do Bot Management usava para montar cada feature de entrada do arquivo.
+
+Com as permissões adicionais concedidas ao usuário, a resposta passou a conter todos os metadados do esquema r0, o que mais do que dobrou o número de linhas da resposta e, no fim, o número de linhas (ou seja, de features) no arquivo final.
+
+Pré-alocação de memória
+
+Cada módulo que roda no serviço de proxy tem limites para evitar consumo de memória sem controle e para pré-alocar memória como otimização de desempenho. Neste caso, o Bot Management tem um limite para o número de features de aprendizado de máquina que podem ser usadas em tempo de execução. Esse limite é de 200, bem acima do uso normal, de cerca de 60 features. O limite existe porque, por razões de desempenho, a memória para as features é pré-alocada.
+
+Quando o arquivo ruim, com mais de 200 features, foi propagado para os servidores, esse limite foi atingido, e o sistema entrou em pânico (panic). O erro não tratado estava no código em Rust do FL2 que faz essa verificação e resultou no seguinte pânico, que por sua vez gerou um erro 5xx:
+
+thread fl2_worker_thread panicked: called Result::unwrap() on an Err value
+
+Outros impactos durante o incidente
+
+Outros sistemas que dependem do proxy central foram afetados durante o incidente, entre eles o Workers KV e o Cloudflare Access. A equipe conseguiu reduzir o impacto nesses sistemas às 13:04, quando foi aplicada uma correção para que o Workers KV contornasse o proxy central. Em seguida, todos os sistemas que dependem do Workers KV, como o próprio Access, tiveram uma taxa de erros menor.
+
+O Dashboard da Cloudflare também foi afetado, porque o Workers KV é usado internamente e porque o Turnstile faz parte do fluxo de login.
+
+Por causa do Turnstile, clientes que não tinham uma sessão ativa no Dashboard não conseguiam fazer login. Isso apareceu como disponibilidade reduzida em dois períodos: das 11:30 às 13:10 e das 14:40 às 15:30.
+
+O primeiro período, das 11:30 às 13:10, foi causado pelo impacto no Workers KV, do qual algumas funções do plano de controle e do Dashboard dependem. Ele foi resolvido às 13:10, quando o Workers KV passou a contornar o proxy central. O segundo período ocorreu depois que os dados de configuração de features foram restaurados: um acúmulo de tentativas de login começou a sobrecarregar o Dashboard. Esse acúmulo, junto com as novas tentativas, aumentou a latência e reduziu a disponibilidade do Dashboard. O aumento da concorrência do plano de controle restaurou a disponibilidade por volta das 15:30.
+
+Correções e próximos passos
+
+Com os sistemas de volta e funcionando normalmente, a Cloudflare começou a trabalhar para torná-los mais resistentes a falhas desse tipo. Em especial, a empresa está:
+
+- tratando a ingestão de arquivos de configuração gerados pela própria Cloudflare com o mesmo rigor aplicado a entradas geradas por usuários;
+- habilitando mais chaves globais de desligamento (kill switches) para funcionalidades;
+- eliminando a possibilidade de core dumps ou outros relatórios de erro sobrecarregarem os recursos do sistema;
+- revisando os modos de falha das condições de erro em todos os módulos do proxy central.
+
+Esta foi a pior interrupção da Cloudflare desde 2019. A empresa já teve interrupções que deixaram o Dashboard indisponível e outras que tornaram funcionalidades novas indisponíveis por um tempo, mas, nos mais de seis anos anteriores, nenhuma outra interrupção tinha feito a maior parte do tráfego principal parar de passar pela rede.
+
+Linha do tempo (UTC)
+
+11:05 - Situação normal. A mudança no controle de acesso do banco de dados é implantada.
+
+11:28 - Início do impacto. A implantação chega aos ambientes dos clientes, e os primeiros erros aparecem no tráfego HTTP dos clientes.
+
+11:32 a 13:05 - A equipe investiga o tráfego elevado e os erros no serviço Workers KV. O sintoma inicial parecia ser a queda na taxa de resposta do Workers KV, com impacto em outros serviços da Cloudflare. Foram tentadas mitigações como manipulação de tráfego e limitação de contas. O primeiro teste automatizado detectou o problema às 11:31, a investigação manual começou às 11:32 e a chamada de incidente foi aberta às 11:35.
+
+13:05 - Contorno (bypass) do Workers KV e do Cloudflare Access implementado, com redução do impacto. A equipe usou desvios internos para que o Workers KV e o Access voltassem a uma versão anterior do proxy central. O problema também existia nas versões anteriores do proxy, mas com impacto menor.
+
+13:37 - O trabalho se concentra em reverter o arquivo de configuração do Bot Management para a última versão sabidamente boa. A equipe estava confiante de que o arquivo de configuração do Bot Management era o gatilho do incidente, e a frente de trabalho mais rápida era restaurar uma versão anterior do arquivo.
+
+14:24 - A criação e a propagação de novos arquivos de configuração do Bot Management são interrompidas. A equipe identificou que o módulo Bot Management era a origem dos erros 500 e que isso era causado por um arquivo de configuração ruim. A implantação automática de novos arquivos de configuração do Bot Management foi suspensa. No mesmo horário, o teste com a versão antiga do arquivo foi concluído com recuperação bem-sucedida, e a equipe passou a acelerar a correção global.
+
+14:30 - Principal impacto resolvido. Um arquivo de configuração correto do Bot Management é implantado globalmente, a maioria dos serviços volta a funcionar corretamente e os serviços dependentes começam a ver menos erros.
+
+17:06 - Todos os serviços resolvidos e fim do impacto. Todos os serviços dependentes foram reiniciados e todas as operações foram totalmente restauradas.
+
+
+Incidente da CrowdStrike em 2024
+
+Na sexta-feira, 19 de julho de 2024, sistemas de computador ao redor do mundo sofreram uma pane que levou a contínuos problemas em várias indústrias diferentes, relacionada a uma atualização defeituosa do software de segurança CrowdStrike para sistemas Microsoft Windows.
+
+Detalhes técnicos
+
+O incidente faz com que as máquinas Windows recebam uma tela azul da morte com a mensagem: “Recuperação: parece que o Windows não carregou corretamente”. A empresa americana de segurança cibernética CrowdStrike admitiu a responsabilidade. A principal causa é uma atualização de driver do software de segurança Falcon Sensor.
+
+A solução oficial é excluir os arquivos %windir%\System32\drivers\CrowdStrike\C-00000291*.sys no modo de segurança. Requer aplicação manual.
+
+Às 09h45 ( UTC ) uma correção foi implantada, segundo o CEO.
+
+Impacto
+
+Houve interrupções em todo o mundo. Como muitos sistemas de TI em todo o mundo usam Windows e o software CrowdStrike, foram relatadas interrupções em muitos setores empresariais. Mais de 1 000 voos foram cancelados globalmente, pois o setor de viagens em geral foi amplamente afetado. Por algumas estimativas, o erro do CrowdStrike causou problemas a aproximadamente 24 000 clientes. O número de computadores individuais afetados é difícil de determinar, pois muitos dos clientes são grandes organizações. Em 2021, estimava-se que cerca de 47% das empresas na lista Fortune 500 eram clientes da CrowdStrike. Em seu próprio site, a CrowdStrike afirma que tem quase 60% das empresas da Fortune 500 e mais da metade das Fortune 1 000 entre seus clientes.
+
+Transporte aéreo
+
+Na América do Norte, um "ground stop" foi emitido pelas companhias United, Delta e American Airlines. Voos no ar continuarão voando, mas novos voos não decolarão. Allegiant Airlines também foram paralisadas pela interrupção, de acordo com a FAA.
+
+A Swiss International Air Lines teve 30% dos voos paralisados. O Aeroporto de Praga na República Tcheca, o Aeroporto de Budapeste na Hungria e a Lufthansa na Alemanha enfrentaram problemas. A Ryanair relatou que a reserva e o check-in estavam indisponíveis, e seus voos do Aeroporto de Bratislava na Eslováquia foram afetados. Aviões não foram autorizados a pousar no Aeroporto de Zurique. A Wizz Air culpou o incidente por seus serviços online estarem offline. A companhia aérea holandesa KLM suspendeu a maioria das operações, anunciando que o manuseio de voos é impossível com o problema. O Aeroporto de Berlim-Brandemburgo planejou parar os voos até às 8 (UTC). Em Bruxelas, os funcionários do Aeroporto de Charleroi verificaram manualmente os passageiros, mas outros softwares aliviaram os problemas até às 10:00 e houve atrasos mínimos. Aeroportos espanhóis foram interrompidos.
+
+O Aeroporto Internacional de Hong Kong experimentou atrasos durante o check-in, principalmente para passageiros da companhia aérea local de baixo custo Hong Kong Express, recorrendo a funcionários usando sinais manuscritos para direcionar os passageiros a diferentes balcões de check-in. A Autoridade Aeroportuária de Hong Kong ativou a resposta de emergência, após a falha dos sites das companhias aéreas e do check-in automático. As companhias aéreas locais Cathay Pacific, Hong Kong Express e Hong Kong Airlines tiveram sistemas de reserva indisponíveis.
+
+A companhia aérea coreana Jeju Air e Spring Japan estão enfrentando problemas. A Jetstar Japan teve que cancelar vários voos. Alguns dos quiosques de autoatendimento no Aeroporto Changi de Singapura foram afetados, atrasando e forçando as companhias aéreas a mudar para o check-in manual. Voos da Cebu Pacific e da Philippines AirAsia estão atrasados. Longas filas se formaram no Aeroporto Internacional Ninoy Aquino.
+
+África
+
+Os bancos na África do Sul, incluindo o Capitec Bank, estavam enfrentando problemas. A Tunísia foi poupada da pane global, apesar de perturbações temporárias nos aeroportos.
+
+Ásia
+
+China
+
+Algumas empresas permitiram que seus funcionários saíssem mais cedo. O termo "Thank you Microsoft for an early vacation" momentaneamente se tornou o mais popular no Weibo.
+
+Índia
+
+Interrupções foram experimentadas pela Air India, Indigo Airlines, Akasa Air, SpiceJet e Vistara. Passes de embarque manuscritos foram emitidos durante a interrupção. O Ministério da Aviação Civil ordenou que as companhias aéreas e os aeroportos fossem compassivos ao fornecer alimentos e assentos, se necessário.
+
+A partir das 18:14 (IST), mais de 200 voos foram cancelados, com a IndiGo sozinha cancelando 192 voos.
+
+Grandes empresas de TI na Índia, como TCS, Infosys, Oracle, Nokia e muitas outras, também enfrentaram a interrupção, resultando em milhares de problemas relatados por funcionários e dispositivos presos em bootloop, sem conseguir se recuperar.
+
+O Indian Computer Emergency Response Team, CERT-In, emitiu uma classificação de severidade crítica para o incidente.
+
+A Maruti Suzuki, uma fabricante de automóveis na Índia, relatou que sua produção foi interrompida e imediatamente adotou medidas de precaução e remediação. A empresa também informou que o problema foi resolvido.
+
+No entanto, a NSE e a BSE disseram que não foram impactadas pela pane global dos sistemas da Microsoft, apesar dos relatos de interrupções. Por outro lado, o Ministro das Ferrovias, Informação e Transmissão, Eletrônicos e Tecnologia da Informação da Índia, Ashwini Vaishnaw, afirmou que o governo estava em contato com a Microsoft e que a causa da interrupção foi identificada. O RBI (Banco da Reserva da Índia) disse em um comunicado que apenas alguns bancos usam ferramentas da CrowdStrike e que muitos sistemas críticos da maioria dos bancos não operam na nuvem, portanto, não foram afetados. O State Bank of India, o maior banco da Índia, relatou que nenhum de seus serviços foi afetado pela interrupção. De acordo com a avaliação do RBI, apenas 10 bancos e NBFCs tiveram interrupções menores que já foram resolvidas ou estão sendo resolvidas. A instituição também afirmou que os sistemas bancários indianos são isolados contra tais interrupções e relataram apenas pequenas interrupções.
+
+Israel
+
+Em Israel, o Magen David Adom e sua linha de serviços de emergência, assim como vários hospitais públicos como o Sheba, Laniado e o Rambam, foram afetados. Outras organizações afetadas incluem a Israel Post e vários bancos locais. Muitas empresas farmacêuticas também foram impactadas.
+
+Japão
+
+Universal Studios Japan anunciou que não venderia ingressos nas bilheterias durante o fim de semana devido à interrupção; no entanto, os ingressos ainda seriam vendidos online ou através de sites de venda de ingressos designados.
+
+Filipinas
+
+Trabalhadores de TI, grandes bancos, telecomunicações, transmissões de rádio e TV foram afetados. Supermercados foram afetados devido à falha nos sistemas de ponto de venda.
+
+Bancos nas Filipinas, como RCBC, Metrobank, LandBank, BDO, UnionBank, BPI e PNB, tiveram seus sistemas online fora do ar devido à interrupção. E-wallets como Maya e GCash também relataram problemas.
+
+Sites do governo nas Filipinas, como o site da Câmara dos Representantes das Filipinas, ficaram fora do ar devido à interrupção.
+
+Turquia
+
+A Turkish Airlines cancelou alguns de seus voos para evitar interrupções. O site e o aplicativo de banco móvel do DenizBank não estavam acessíveis.
+
+Outros
+
+O operador ferroviário da Malásia, KTMB, confirmou que seu sistema de bilhética KITS estava enfrentando problemas técnicos.
+
+Numerosas empresas de Singapura, incluindo Singapore Airlines, Scoot, Singapore Post, Singapore Exchange (SGX), SPH Media, Singtel, M1, Grab e DBS Bank, relataram vários níveis de dificuldades de serviço ao longo do dia 19 de julho.
+
+As cancelas de entrada e saída de estacionamentos em Singapura foram afetadas em 185 locais geridos pelo Housing and Development Board (HDB).
+
+Europa
+
+Bélgica
+
+Na Bélgica, o problema afetou a compra de bilhetes de trem e anúncios digitais nas estações da Companhia Nacional de Ferrovias da Bélgica, os laptops de escritório da DPG Media Bélgica – o que impacta as rádios JOE e QMusic, bancos, serviços postais, agências governamentais, comunicação telefônica com os serviços urbanos em Antuérpia.
+
+Um porta-voz da Companhia Nacional de Ferrovias da Bélgica disse que não há impacto no tráfego real dos trens, mas sim em todas as aplicações digitais. Eles anteriormente aconselharam os passageiros a ouvirem os anúncios de áudio nas várias estações de trem, e, se não puderem comprar um bilhete, a entrarem em contato com o condutor do trem.
+
+O Centro de Cibersegurança da Bélgica declarou que o impacto na Bélgica é limitado.
+
+A SPF Saúde Pública confirmou que dois hospitais foram impactados e ativaram seus planos de emergência de TI. Eles também afirmaram que não há impacto no atendimento, apenas nas novas admissões de pacientes.
+
+O Centro Nacional de Crise estava avaliando o impacto na Bélgica e afirmou que não havia relatos de problemas significativos nos setores de segurança e em nossa infraestrutura crítica (por exemplo, usinas de energia ou setor de transporte). Eles também foram informados sobre o problema que afetou dois hospitais na Bélgica.
+
+França
+
+Vários canais de TV franceses afetados pelos problemas incluem TF1, TFX, LCI e as redes do Canal+ Group. O fornecedor de serviços telefônicos e de internet Bouygues Telecom também anunciou a indisponibilidade de seu serviço ao cliente como resultado da interrupção. O Aeroporto Charles de Gaulle e o Aeroporto de Orly também enfrentaram problemas relacionados ao check-in e suspensão de voos.
+
+As operações dos Jogos Olímpicos de Verão de 2024, que estão programadas para começar oficialmente em uma semana em Paris, França, também foram afetadas. O incidente ocorreu um dia após a abertura da Vila Olímpica, e os organizadores estavam processando a chegada de atletas e delegados. O comitê organizador disse que um plano de contingência foi ativado e que apenas a entrega de uniformes e credenciais foi impactada. No entanto, o incidente está retardando as operações, com a mesa de credenciamento no centro de imprensa fechada e verificações de segurança feitas manualmente usando uma lista de nomes.
+
+Alemanha
+
+Dois hospitais em Lübeck e Kiel cancelaram operações não emergenciais. A cadeia de supermercados Tegut fechou algumas de suas lojas. O Aeroporto de Berlim Brandemburgo anunciou que desde cerca de 7h00 (UTC+2), os processos operacionais foram afetados por "problemas de TI em um fornecedor externo". Enquanto o manuseio de passageiros continuou com algumas restrições, houve atrasos e alguns voos tiveram que ser cancelados pelas companhias aéreas.
+
+Irlanda
+
+The Irish Times relatou que várias empresas irlandesas foram impactadas, incluindo Ryanair. A Transport for Ireland disse que seus aplicativos estavam fora do ar devido à interrupção. Clubes da GAA relataram que não conseguiram acessar ingressos para o All Ireland.[carece de fontes]?
+
+Ilha de Man
+
+A Manx Radio relatou que os consultórios de médicos foram impactados e que a interrupção de voos, especialmente para e do Reino Unido, era antecipada, mas atualmente mínima. Negócios foram relatados como "principalmente não afetados".
+
+Países Baixos
+
+Negócios operando nos Países Baixos que estão enfrentando problemas incluem o Aeroporto Schiphol, o Porto de Roterdã, e a emissora pública NPO.
+
+Espanha
+
+ENAIRE, responsável pela gestão nacional do controle de tráfego aéreo, também fez referência a uma falha de TI em seu site e redes sociais. Todos os aeroportos espanhóis relataram interrupções e os governos regionais de Aragão, País Basco, Castela-Mancha, Catalunha e Galícia relataram problemas com seus serviços de saúde.
+
+Reino Unido
+
+Sky News não conseguiu transmitir ao vivo, assim como o CBBC, canal de televisão infantil da BBC que é de acesso livre.
+
+Vários aeroportos enfrentaram dificuldades, incluindo o Edimburgo, cujos painéis de partida congelaram, e o Aeroporto de Gatwick, onde a leitura de códigos de barras automáticos parou de funcionar e teve que ser feita manualmente.
+
+As empresas ferroviárias também foram afetadas. O Serviço Nacional de Saúde (NHS) afirmou que os problemas estão "causando interrupções na maioria das clínicas de GP [clínicas gerais] inglesas", com alguns de seus serviços, como clínicas de GP, que dependem de um software chamado EMIS Web, incapazes de visualizar e gerenciar registros médicos, emitir e gerenciar prescrições ou fazer agendamentos. A Bolsa de Valores de Londres, embora operando normalmente, não conseguiu atualizar as notícias em seu site.
+
+A empresa de apostas Ladbrokes Coral e a rede de supermercados Morrisons também relataram problemas. A Amadeus, que gerencia a bagagem no Heathrow, afirmou que foi afetada pela falha de TI.
+
+Os táxis em Londres também foram afetados, pois os clientes não conseguiam pagar com cartões de crédito ou débito e precisavam pagar em dinheiro.
+
+Fontes de notícias no Reino Unido relataram que o comitê COBR do governo se reuniu para discutir o incidente.
+
+Outros
+
+O Sistema Central de Informações de Saúde da Croácia [hr] na Croácia foi afetado, embora tenha sido esclarecido que se tratava de um problema separado ligado à mudança de seus servidores para um novo local assim como o Controle de Tráfego Aéreo Croata. O Hospital Professor Doutor Fernando Fonseca em Portugal registrou problemas. O porta-voz da Autoridade Nacional de Segurança confirmou que várias instituições na Eslováquia foram afetadas. A empresa farmacêutica Krka na Eslovênia teria sofrido uma queda total de produção e enviado seus funcionários para casa. Na Suécia, o tráfego aéreo foi interrompido, os ingressos para jogos de futebol e transporte público não puderam ser vendidos e a mina Malmberget foi evacuada como precaução. Vodafone, Nova Poshta e Sense Bank na Ucrânia sofreram falhas devido à atualização. Cadeias de farmácias norueguesas Apotek1 tiveram que fechar suas lojas por algum tempo.
+
+Mercedes AMG PETRONAS F1 Team também enfrentou problemas na sexta-feira do Grande Prêmio da Hungria, com um porta-voz da Mercedes confirmando que a equipe teve que resolver o problema manualmente em cada computador que usava. A falha também afetou seus clientes de motores, McLaren, Aston Martin e Williams.
+
+América do Norte
+
+Canadá
+
+O Montreal-Trudeau International Airport e o Toronto Pearson International Airport foram afetados. O Vancouver International Airport também foi afetado, embora não estivesse claro se isso estava diretamente relacionado às interrupções globais. A Canadian Broadcasting Corporation também foi impactada.
+
+Estados Unidos
+
+Houve interrupções nos serviços de 911 ou problemas nas operações dos centros de atendimento de 911 em algumas partes do Alasca, Arizona, Flórida, Indiana, Kansas, Michigan, Minnesota, Nova York, Ohio, e Pensilvânia. O 911 estava fora de serviço em todo o estado de New Hampshire. Além disso, o Alasca está enfrentando problemas com centros de chamadas não emergenciais.
+
+As ações da Microsoft e da CrowdStrike caíram como resultado da interrupção. As ações da CrowdStrike caíram quase 12 por cento no pré-mercado na manhã de sexta-feira.
+
+Muitos hospitais nos Estados Unidos pausaram cirurgias não urgentes. Embora permanecessem abertos, os hospitais tinham acesso limitado, se é que tinham, aos registros dos pacientes.
+
+O serviço de Sim racing IRacing também foi afetado pela interrupção.
+
+América do Sul
+
+Brasil
+
+Vários aplicativos de bancos, assim como caixas eletrônicos em agências presenciais, aeroportos e sistemas de operadoras de telefonia celular apresentaram picos de lentidão e problemas em seus serviços durante a madrugada e nas primeiras horas do dia. Além disso, parte dos sistemas ligados ao Supremo Tribunal Federal (STF) também foram afetados pela falha.
+
+A Record foi uma das emissoras de televisão afetadas pelo problema, chegando a não conseguir acesso ao sistema de transmissões (switcher), com o problema sendo percebido durante toda a programação matinal, principalmente no telejornal Fala Brasil, que foi ao ar totalmente ao vivo, mas com falhas na geração de caracteres, causando também a falta de conexão com as emissoras afiliadas e filiais para exibição de links nas ruas e a transmissão de reportagens gravadas, afetando também o Hoje em Dia.
+
+Oceania
+
+Austrália
+
+Empresas e agências governamentais australianas foram grandemente impactadas pelas interrupções, incluindo empresas de mídia, companhias aéreas, aeroportos, supermercados, hospitais, universidades, escritórios de advocacia, farmácias, cassinos, redes de trem, postos de gasolina, estádios e bancos. Empresas de mídia australianas afetadas pelos problemas incluem a ABC, SBS, Seven Network e Nine Network.
+
+As companhias aéreas afetadas incluem Qantas, Virgin Australia e Jetstar. Um porta-voz do Sydney Airport disse que a interrupção afetou algumas operações de companhias aéreas e que o aeroporto pode enfrentar alguns atrasos ao longo da noite. Em seu boletim de notícias, a Nine Network informou que o toque de recolher do Sydney Airport significava que não haveria tempo suficiente para eliminar o atraso antes das 23h e que pode levar vários dias para resolver o atraso. O Melbourne Airport também foi afetado, com declarações no site destacando o "problema tecnológico global" como impactante nos procedimentos de check-in, e aconselhando os passageiros a consultarem as companhias aéreas relevantes. Canberra Airport, Darwin Airport, Adelaide Airport, Perth Airport, Hobart Airport, Launceston Airport e Brisbane Airport também foram afetados.
+
+Varejistas e redes de fast food também foram afetados pela interrupção, fazendo com que os sistemas de autoatendimento e pedidos online ficassem fora de serviço. Postos de gasolina também foram afetados, com pessoas presas nas bombas de combustível sem poder pagar pela gasolina porque os sistemas de pagamento não estavam funcionando.
+
+Supermercados afetados incluem Woolworths e Coles, com a maioria das lojas sendo forçadas a encerrar as atividades do dia. Aplicativos bancários ficaram fora do ar, afetando bancos como NAB, Westpac, ANZ, Commonwealth Bank, Bendigo Bank e Suncorp. A operadora de trens de carga Aurizon foi afetada. Trens regionais em NSW nas linhas Hunter Line e Southern Highlands Line foram cancelados ou atrasados, com a rede de ônibus e trens regionais em Victoria, operada pela V/Line, tendo todas as linhas suspensas. Sistemas em alguns hospitais da Ramsay Health Care e da Uniting Care foram afetados, incluindo o Wesley Hospital e o St Andrews Hospital em Brisbane. O Sunshine Coast Council foi um dos vários conselhos afetados. A bilheteria no Docklands Stadium para a partida da Australian Football League de sexta-feira à noite entre o Essendon Bombers e o Adelaide Crows foi afetada.
+
+Os vitorianos foram aconselhados a ligar para 000 se um alarme de incêndio soar ou fumaça for detectada, pois alguns alarmes automáticos em prédios podem não chamar automaticamente os serviços de incêndio devido à interrupção.
+
+O governo australiano realizou uma reunião de emergência nacional para lidar com a interrupção. Foi declarado que o Mecanismo Nacional de Coordenação foi ativado, com o Primeiro-Ministro Anthony Albanese dizendo "Entendo que os australianos estão preocupados com a interrupção que está se desenrolando globalmente e afetando uma ampla gama de serviços. Meu governo está trabalhando em estreita colaboração com o Coordenador Nacional de Segurança Cibernética". Ele disse posteriormente: "Não há impacto na infraestrutura crítica, serviços governamentais ou serviços Triple-0 até o momento. O Mecanismo Nacional de Coordenação foi ativado e está se reunindo agora".
+
+Nova Zelândia
+
+Empresas operando na Nova Zelândia enfrentando problemas incluem os bancos ANZ, ASB, Kiwibank e Westpac, os supermercados Woolworths e o cartão de transporte HOP da Auckland Transport. O Christchurch Airport também está tendo problemas, assim como o Parlamento. Clientes também enfrentaram problemas de pagamento nos supermercados Foodstuffs.
+
+
+CrowdStrike
+
+CrowdStrike Holdings, Inc. é uma empresa estadunidense de tecnologia de segurança cibernética com sede em Austin, Texas. Ele fornece proteção e serviços de resposta a ataques cibernéticos.
+
+A empresa esteve envolvida em investigações de vários ataques cibernéticos de alto perfil, incluindo o ataque cibernético contra a Sony Pictures em 2014, os ataques cibernéticos de 2015–16 ao Comitê Nacional Democrata (DNC) e o vazamento de e-mail de 2016 envolvendo o DNC. Em julho de 2024, uma atualização defeituosa do seu software de segurança causou interrupções globais nos computadores, afetando viagens aéreas, serviços bancários, radiodifusão e outros serviços.
+
+História
+
+Fundação: 2011–2019
+
+CrowdStrike foi cofundada por George Kurtz (CEO), Dmitri Alperovitch (ex-CTO) e Gregg Marston (CFO, aposentado) em 2011. Em 2012, Shawn Henry, ex-funcionário do Federal Bureau of Investigation (FBI), foi contratado para liderar a subsidiária CrowdStrike Services, Inc., que se concentrava em serviços proativos e de resposta a incidentes. Em junho de 2013, a empresa lançou seu primeiro produto, CrowdStrike Falcon, que fornecia proteção de endpoint, inteligência de ameaças e atribuição.
+
+Em maio de 2014, os relatórios da CrowdStrike ajudaram o Departamento de Justiça dos Estados Unidos a acusar cinco hackers militares chineses por espionagem económica cibernética contra empresas dos Estados Unidos. A CrowdStrike também descobriu as atividades do Energetic Bear, um grupo ligado ao Serviço Federal de Segurança da Rússia que conduziu operações de inteligência contra alvos globais, principalmente no setor energético.
+
+Após o hack da Sony Pictures, a CrowdStrike descobriu evidências que implicavam o governo da Coreia do Norte e demonstrou como o ataque foi realizado. Em 2014, a CrowdStrike desempenhou um papel na identificação de membros do Putter Panda, o grupo chinês de hackers patrocinado pelo Estado, também conhecido como PLA Unit 61486.
+
+Em maio de 2015, a empresa divulgou informações sobre o VENOM, uma falha crítica em um hipervisor de código aberto chamado Quick Emulator (QEMU), que permitia que invasores acessassem informações pessoais confidenciais. Em outubro de 2015, a CrowdStrike anunciou que tinha identificado ataques de hackers chineses contra empresas tecnológicas e farmacêuticas na época em que o então presidente dos EUA, Barack Obama, e o líder da China, Xi Jinping, concordaram publicamente em não realizar espionagem econômica um contra o outro. O suposto hackeamento teria violado esse acordo.
+
+Em 2017, a empresa atingiu uma avaliação de mais de 1 bilhão de dólares, com uma receita anual estimada de 100 milhões de dólares. Em junho de 2018, a empresa disse que estava avaliada em mais de 3 bilhões de dólares. Entre seus investidores estão Telstra, March Capital Partners, Rackspace, Accel Partners e Warburg Pincus.
+
+Em junho de 2019, a empresa fez uma oferta pública inicial na Nasdaq.
+
+Aquisições: 2020–2024
+
+Em setembro de 2020, a CrowdStrike adquiriu o provedor de tecnologia Preempt Security por 96 milhões de dólares. Em fevereiro de 2021, a empresa adquiriu a plataforma dinamarquesa de gerenciamento de logs Humio por 400 milhõesde dólares com planos de integrar a agregação de log da Humio à oferta XDR da CrowdStrike. Mais tarde naquele mês de novembro, a CrowdStrike adquiriu o SecureCircle, um serviço de segurança cibernética baseado em SaaS que estende a segurança de endpoint de confiança zero para incluir dados. Em dezembro de 2021, a empresa mudou sua sede de Sunnyvale, Califórnia, para Austin, Texas. Em 2023, introduziu o serviço CrowdStream em colaboração com Cribl.io. Também se concentrou em trabalhar com o governo dos Estados Unidos e vender seus serviços para agências governamentais. A CrowdStrike juntou-se ao índice S&P 500 em junho de 2024. Em 2023, a adquiriu a startup israelense de segurança cibernética Bionic.ai. Em 2024, a CrowdStrike adquiriu a startup israelense Flow Security.
+
+Incidente de 2024
+
+Em 19 de julho de 2024, uma atualização de software defeituosa do scanner de vulnerabilidade CrowdStrike Falcon Sensor causou telas azuis mortais em máquinas Microsoft Windows, interrompendo milhões de computadores Windows em todo o mundo. As máquinas afetadas foram forçadas a entrar em um bootloop, tornando-as inutilizáveis. O tempo de inatividade causou um impacto global generalizado, suspendendo voos de companhias aéreas comerciais, derrubando temporariamente o sinal do canal britânico Sky News e impactando os centros de atendimento de emergência 911. Em 19 de julho de 2024, as ações da CrowdStrike fecharam as negociações a um preço de $304,96. -38,09 com uma queda de -11,10%.
+
+Estatísticas
+
+(O Ano Fiscal termina em 31 de janeiro)
+
+
+Microsoft Azure
+
+Microsoft Azure, às vezes estilizado como Azure, e anteriormente Windows Azure , é a plataforma de computação em nuvem desenvolvida pela Microsoft. Oferece gerenciamento, acesso e desenvolvimento de aplicações e serviços a indivíduos, empresas, e governos por meio de sua infraestrutura global. Ele também fornece uma variedade de recursos, incluindo software como serviço (SaaS), plataforma como serviço (PaaS) e infraestrutura como serviço (IaaS) e suporta muitas linguagens de programação, ferramentas e frameworks diferentes, incluindo software e sistemas específicos da Microsoft e de terceiros.
+
+A apresentação do serviço foi feita no dia 27 de outubro de 2008, durante a Professional Developers Conference, em Los Angeles; e lançado em 1 de fevereiro de 2010 como Windows Azure, para então ser renomeado como Microsoft Azure em 25 de março de 2014.
+
+Em 2021, era o segundo maior provedor de computação em nuvem do mundo, atrás apenas da AWS (da Amazon), e à frente da GCP (da Google).
+
+Funcionamento
+
+Sua computação em nuvem é definida como uma combinação de software como serviço (SaaS) com computação em grelha.
+
+A computação em grelha dá o poder de computação e alta escalabilidade oferecida para as aplicações, através de milhares de máquinas (hardware) disponíveis em centros de processamento de dados de última geração. A partir de software como serviço, se tem a capacidade de contratar um serviço e pagar somente pelo uso, permitindo a redução de custos operacionais, com uma configuração de infraestrutura realmente mais aderente às necessidades[carece de fontes]?.
+
+Serviços
+
+O Azure usa virtualização em larga escala nos data centers da Microsoft em todo o mundo e oferece mais de 600 serviços. Os principais recursos ou serviços do Azure são amplamente classificados em quatro categorias: computação, rede, armazenamento e banco de dados.
+
+Alguns dentre eles inclui :
+
+Azure Active Directory.
+
+Azure CDN.
+
+Azure Data Factory.
+
+Azure SQL.
+
+Azure Function.
+
+CosmosDB.
+
+DevOps.
+
+Azure Backup.
+
+Virtual Machine
+
+Azure Local
+
+O Azure Local é uma solução de infraestrutura hiperconvergente (HCI) executada localmente, que permite a operação de máquinas virtuais, contêineres e serviços selecionados do Azure em um ambiente integrado à nuvem.
+
+Distribuição
+
+O Microsoft Azure entrou em produção em 1 de janeiro de 2010; e sua fase comercial está no ar desde 1 de fevereiro de 2010. Na primeira onda de lançamentos, 21 países foram atendidos.
+
+2020
+
+Até meados de março de 2010, os seguintes datacenters estavam disponíveis para deployment de solução sobre o Microsoft Azure:
+
+Europa: Oeste e Norte da Europa
+
+Ásia-Pacífico: Ásia do Leste e Sudeste Asiático
+
+América do Norte: Centro-Sul, Centro-Norte, Leste e Oeste dos EUA
+
+Atualmente
+
+A maioria dos serviços da Azure são implantados regionalmente e permitem ao cliente especificar a região em que o serviço será implantado. Existem atualmente os seguintes datacenters, implementados por subregiões, as quais estão organizadas em regiões:
+
+
+Rede de fornecimento de conteúdo
+
+CDN (em inglês: content delivery network ou content distribution network) é um termo técnico traduzido literalmente para o português como rede de fornecimento, entrega e distribuição de conteúdo, que descreve um sistema de computadores e redes interligados através da Internet, que cooperam de modo transparente para fornecer conteúdo (particularmente grandes conteúdos de mídia) a usuários finais. O conceito foi criado nom fim da década de 1990 como forma de aliviar gargalos de performance da Internet. Simplificando, CDN, é uma maneira de enviar conteúdo massivo para usuários sem ter problemas com desempenho.
+
+No entanto, uma CDN moderna vai muito além de apenas redistribuir conteúdo. Novas tecnologias foram agregadas e estas redes atualmente oferecem também proteção contra ataques de hackers, spammers e ataques de DDoS, através de mecanismos chamados WAF (Web Application Firewall). As CDN atuais são também capazes de armazenar e redistribuir conteúdos dinâmicos (gerados por scripts), algo que as anteriores não conseguiam, pois só armazenavam conteúdos estáticos como códigos HTML e imagens. A maioria dos CDNs atuais utilizam Anycast para distribuição e roteamento. [carece de fontes]?
+
+O funcionamento de uma CDN se dá pela alocação de servidores dentro de Datacenter, sendo que quando é solicitado aos servidores DNS a resolução de um nome, este obtem a resposta com o endereço do servidor local. O servidor local analisa a existência de cache, que caso haja, é entregue ao usuario. Se não houver a informação em cache, é solicitado a outro servidor dentro de seu backbone. Basicamente os servidores CDN trabalham em “malha”, interligados e realizando comunicações entre si, visando fornecer os conteúdos mais rapidamente e com a melhor qualidade possível.
+
+Apesar de sua importância, essas redes ainda tem um uso discreto no Brasil, sendo majoritariamente utilizada por grandes websites . Acredita-se, no entanto, que com o crescimento do número de CDNs atuando no Brasil (como CloudFlare, CloudFront, GoCache, Fastly e Sucuri) uma parcela maior de sites brasileiros, pequenos e médios, deverão adotar a tecnologia nos próximos anos.[carece de fontes]?
+
+Tecnologia
+
+Nodos de CDN são geralmente distribuídos em diversos locais, frequentemente utilizando de vários backbones. Os benefícios incluídos em utilizar CDNs são a redução dos custos de transferência de dados, melhorando o tempo de carregamento de páginas, ou aumentando a disponibilidade do conteúdo ao redor do mundo. O número de servidores e nodos que compõem uma CDN pode variar, dependendo da arquitetura, alguns alcançando milhares de nodos com dezenas de milhares de servidores em muitos Point of Presence ("pontos de presença" ou PoPs) remotos. Outros compõem uma rede global e tem um pequeno número de PoPs no mapa.
+
+As solicitações de conteúdo são normalmente direcionadas por algoritmos para os nodos que estão mais disponíveis. Quando otimizados para obter desempenho, os locais ideais podem ser escolhidos para oferecer o conteúdo ao usuário. Isso pode ser feito escolhendo locais que tem o menor número de saltos, o menor tempo entre o cliente e o servidor, ou a maior disponibilidade em termos de desempenho do servidor, de modo a otimizar a entrega de dados através da rede local. Para minimizar os custos, locais que vão exigir menos investimentos podem ser escolhidos. Em um cenário ideal, esses dois objetivos tendem a se alinhar, criando servidores de borda (edge) que são próximos ao usuário final, que estão na "borda" da rede, obtendo assim uma vantagem em desempenho ou custo.[carece de fontes]?
+
+A maioria dos provedores CDN irão prover os seus serviços sob uma quantidade, definida, de PoPs, dependendo da área desejada, tal como o Brasil, o Mundo todo, a região da Ásia-Pacifico, etc. Esses conjuntos de PoPs podem ser chamados de "nodos de borda" ou "redes de borda", pois seriam a borda mais próxima  ao usuário final da CDN.
+
+
+Proxy reverso
+
+Em redes de computadores, um proxy reverso ou servidor substituto é um servidor proxy que parece a qualquer cliente ser um servidor web comum, mas na realidade age apenas como um intermediário que encaminha as solicitações do cliente para um ou mais servidores web comuns. Os proxies reversos ajudam a aumentar a escalabilidade, o desempenho, a resiliência e a segurança, mas também apresentam vários riscos.
+
+As empresas que executam servidores web geralmente configuram proxies reversos para facilitar a comunicação entre o navegador de um usuário da Internet e os servidores web. Uma vantagem importante de fazer isso é que os servidores web podem ser ocultados atrás de um firewall (muitas vezes um firewall de aplicação web) em uma rede interna da empresa, e apenas o proxy reverso precisa ser exposto diretamente à Internet. Os servidores proxy reversos são implementados em servidores web populares de código aberto. Servidores proxy reversos dedicados são usados por alguns dos maiores sites da Internet.
+
+Um proxy reverso é capaz de rastrear endereços IP de solicitações retransmitidas por ele, bem como ler e ou modificar qualquer tráfego que não estiver criptografado. No entanto, isso implica que qualquer pessoa que tenha comprometido o servidor também poderia fazê-lo.
+
+Os proxies reversos diferem dos proxies de encaminhamento, que são usados quando o cliente está restrito a uma rede interna privada e solicita que um proxy de encaminhamento recupere recursos da Internet pública.
+
+Usos
+
+Grandes sites e redes de distribuição de conteúdo usam proxies reversos, juntamente com outras técnicas, para equilibrar a carga entre servidores internos. Os proxies reversos podem manter um cache de conteúdo estático, o que reduz ainda mais a carga nesses servidores internos e na rede interna. Também é comum que os proxies reversos adicionem recursos como compactação ou encriptação TLS ao canal de comunicação entre o cliente e o proxy reverso.
+
+Os proxies reversos podem inspecionar cabeçalhos HTTP, o que, por exemplo, permite que eles apresentem um único endereço IP para a Internet enquanto retransmitem solicitações para diferentes servidores internos com base no URL da solicitação HTTP.
+
+Os proxies reversos podem ocultar a existência e as características dos servidores de origem. Isso pode tornar mais difícil determinar a localização real do servidor ou site de origem e, por exemplo, mais desafiador iniciar ações legais, como remoções ou bloqueio de acesso ao site, pois o endereço IP do site pode não ser imediatamente aparente. Além disso, o proxy reverso pode estar localizado em uma jurisdição diferente com diferentes requisitos legais, complicando ainda mais o processo de remoção.
+
+Os recursos de firewall de aplicação podem proteger contra ataques comuns baseados na web, como um ataque de negação de serviço (DoS) ou ataques de negação de serviço distribuídos (DDoS). Sem um proxy reverso, remover malware ou iniciar remoções (enquanto lida simultaneamente com o ataque) no próprio site, por exemplo, pode ser difícil.
+
+No caso de sites seguros, um servidor web pode não executar a criptografia TLS sozinho, mas, em vez disso, descarregar a tarefa para um proxy reverso que pode ser equipado com hardware de aceleração TLS. (Ver proxy de terminação TLS.)
+
+Um proxy reverso pode distribuir a carga de solicitações de entrada para vários servidores, com cada servidor atendendo a sua própria área de aplicação. No caso de servidores web de proxy reverso, o proxy reverso pode ter que reescrever o URL em cada solicitação de entrada para corresponder ao local interno relevante do recurso solicitado.
+
+Um proxy reverso pode reduzir a carga em seus servidores de origem armazenando em cache conteúdo estático e conteúdo dinâmico, isso é conhecido como aceleração da web. Caches de proxy desse tipo geralmente podem satisfazer um número considerável de solicitações de sites, reduzindo muito a carga no(s) servidor(es) de origem.
+
+Um proxy reverso pode otimizar o conteúdo compactando-o para acelerar os tempos de carregamento.
+
+Em uma técnica chamada "spoon-feeding", uma página gerada dinamicamente pode ser produzida em sua totalidade e entregue ao proxy reverso, que pode fornecê-la ao cliente conforme a conexão permitir. O programa que gera a página não precisa permanecer aberto, liberando assim recursos do servidor durante o tempo, possivelmente prolongado, que o cliente precisa para concluir a transferência.
+
+Os proxies reversos podem operar onde quer que vários servidores da web devam ser acessíveis por meio de um único endereço IP público. Os servidores da web "escutam" em portas diferentes na mesma máquina, com o mesmo endereço IP local ou, possivelmente, em máquinas diferentes com endereços IP locais diferentes. O proxy reverso analisa cada solicitação recebida e a entrega ao servidor certo dentro da rede de área local.
+
+Proxies reversos podem executar testes A/B e testes multivariados sem exigir código de aplicativo para lidar com a lógica de qual versão é servida a um cliente.
+
+Um proxy reverso pode adicionar autenticação de acesso a um servidor web que não tem nenhuma autenticação.
+
+Riscos
+
+Quando o tráfego de trânsito é encriptado e o proxy reverso precisa filtrar, armazenar em cache, compactar, modificar ou melhorar o tráfego, o proxy primeiro deve descriptografar e criptografar novamente as comunicações. Isso requer que o proxy possua o certificado TLS e sua chave privada correspondente, estendendo o número de sistemas que podem ter acesso a dados que não estejam criptografados e tornando-o um alvo mais valioso para invasores.
+
+A grande maioria das violações de dados externos acontece quando hackers conseguem abusar de um proxy reverso existente que foi intencionalmente implantado por uma organização ou quando hackers conseguem converter um servidor existente voltado para a Internet em um servidor proxy reverso.[carece de fontes]? Sistemas comprometidos ou convertidos permitem que invasores externos especifiquem para onde desejam que seus ataques sejam enviados por proxy, permitindo seu acesso a redes e sistemas internos.
+
+Os aplicativos que foram desenvolvidos para uso interno de uma empresa normalmente não são reforçados para padrões públicos e não são necessariamente projetados para suportar todas as tentativas de hacking. Quando uma organização permite acesso externo a esses aplicativos internos por meio de um proxy reverso, eles podem aumentar involuntariamente sua própria superfície de ataque e convidar hackers.
+
+Se um proxy reverso não estiver configurado para filtrar ataques ou não receber atualizações diárias para manter seu banco de dados de assinaturas de ataque atualizado, uma vulnerabilidade de dia zero pode passar sem filtro, permitindo que os invasores obtenham controle do(s) sistema(s) que estão por trás do servidor proxy reverso.[carece de fontes]?
+
+Conceder acesso a chaves privadas (para armazenamento em cache ou otimização de conteúdo) a um proxy reverso de terceiros coloca toda a tríade de confidencialidade, integridade e disponibilidade (CIA) nas mãos do terceiro que opera o proxy.
+
+Um proxy reverso é um ponto único de falha para os serviços de back-end aos quais ele serve de fachada: uma interrupção causada por falha de configuração, um ataque de negação de serviço ou uma falha de software pode tornar inacessíveis a clientes externos todos os serviços protegidos por ele, mesmo quando os próprios serviços de back-end continuarem funcionando perfeitamente. Por exemplo, uma queda em 2020 na Cloudflare derrubou temporariamente grandes sites e serviços que dependiam de sua rede de proxies reversos na borda, incluindo o Discord.
+
+
+Ataque de negação de serviço
+
+O ataque de negação de serviço (também conhecido como DoS-Attack, acrônimo em inglês de Denial of Service), é um ataque virtual que tenta tornar os recursos de um sistema indisponíveis para os seus utilizadores. Alvos típicos são servidores web e websites, estes possuem um limite de solicitações de utilizadores que serão respondidas simultaneamente, o ataque DDos envia um excesso de solicitações que leva os alvos à sobrecarga, tentando tornar as páginas hospedadas indisponíveis na rede. Não é uma invasão do sistema, mas sim a invalidação por sobrecarga.
+
+Os ataques de negação de serviço são feitos geralmente de duas formas:
+
+forçar o sistema vítima a reinicializar ou consumir todos os recursos (como memória ou processamento, por exemplo) de forma que ele não possa mais fornecer seu serviço;
+
+obstruir a mídia de comunicação entre os utilizadores e o sistema vítima de forma a não se comunicarem adequadamente.
+
+Ataque distribuído
+
+No ataque distribuído de negação de serviço (também conhecido como DDoS-Attack, um acrônimo em inglês para Distributed Denial of Service), um computador mestre denominado master pode ter sob seu comando até milhares de computadores zombies (são literalmente zumbis, escravizados). Nesse caso, as tarefas de ataque de negação de serviço são feitas por um "exército" de máquinas escravizadas (ataque distribuído).
+
+O ataque consiste em fazer com que os zombies (máquinas infectadas e sob comando do mestre) se preparem para aceder a um determinado recurso num determinado servidor numa mesma hora de uma mesma data. Passada essa fase, na determinada hora, todos os zombies (ligados e conectados à rede) acedem ao mesmo recurso do mesmo servidor. Como servidores web possuem um número limitado de utilizadores que pode atender simultaneamente (slots), o grande e repentino número de requisições de acesso esgota esse número, fazendo com que o servidor não seja capaz de atender a mais nenhum pedido.
+
+Dependendo do recurso atacado, o servidor pode chegar a reiniciar ou até mesmo ficar travado.
+
+Vírus conhecidos criados para a distribuição de rotinas de ataque de negação de serviço incluem "Codered", "Slammer", "MyDoom", que escravizam o infectado. Ferramentas conhecidas de ataques DDos incluem "Fabi" (1998), "Blitznet", "Trin00" (jun/1999), "TFN" (ago/1999), "Stacheldraht" (set/1999), "Shaft", "TFN2K" (dez/1999), "Trank".
+
+Uma outra estratégia de ataque seria por meio dos botnets praticando ataques de negação de serviço contra alvos remotos.
+
+Tipos
+
+O principal objetivo de um ataque de negação de serviço é deixar um recurso computacional inacessível aos seus utilizadores legítimos. As duas classes principais de métodos de ataque são diminuição de largura de banda e esgotamento de recursos. Ataques de diminuição de largura de banda são caracterizados pelos ataques por inundação e amplificação. Ataques de esgotamento de recursos são ataques que fazem uso indevido dos protocolos de comunicação de rede ou enviam pacotes de rede malformados.
+
+Ataques por inundação
+
+Ataques por inundação se caracterizam por enviarem um grande volume de tráfego ao sistema da vítima primária de modo a congestionar a sua banda. O impacto deste ataque pode variar entre deixar o sistema lento, derrubá-lo ou sobrecarregar a banda da rede da vítima. Ataques por inundação podem usar pacotes UDP (User Datagram Protocol) ou ICMP (Internet Control Message Protocol). Um dos grandes problemas desse ataque é que qualquer tipo de pacote pode ser usado, bastando ele ter permissão de andar pelos enlaces até o sistema visado, e dessa forma, consumindo toda a capacidade do servidor.
+
+Ataques por amplificação
+
+Ataques por amplificação se caracterizam por enviarem requisições forjadas para uma grande quantidade de computadores ou para um endereço IP de broadcast, que por sua vez responderão às requisições. Forjando o endereço IP de origem das requisições para o endereço IP da vítima primária fará com que todas as respostas sejam direcionadas para o alvo do ataque. O endereço IP de broadcast é um recurso encontrado em roteadores. Quando uma requisição possui um endereço IP de broadcast como endereço de destino, o roteador replica o pacote e o envia para todos os endereços IP dentro do intervalo de broadcast. Em ataques por amplificação, endereços de broadcast são usados para amplificar e refletir o tráfego de ataque, reduzindo então a banda da vítima primária.
+
+Ataques por exploração de protocolos
+
+Ataques por exploração de protocolos se caracterizam por consumir excessivamente os recursos da vítima primária explorando alguma característica específica ou falha de implementação de algum protocolo instalado no sistema da vítima.
+
+Os principais ataques por exploração de protocolos são por uso indevido de pacotes TCP SYN
+
+(Transfer Control Protocol Synchronize) ou de pacotes TCP PUSHACK.
+
+Ataques na Camada de Aplicação (Camada 7)
+
+Ataques na camada de aplicação, também conhecidos como ataques Layer 7, visam diretamente os aplicativos e serviços que rodam sobre o protocolo HTTP/S, como sites e APIs. O objetivo é exaurir os recursos computacionais da aplicação, como CPU, memória ou conexões simultâneas, simulando tráfego legítimo e dificultando sua detecção.
+
+Ao contrário de ataques de inundação (camada de rede), esses ataques podem ser realizados com menos largura de banda e ainda assim causar grande impacto, tornando-se uma ameaça sofisticada. Exemplos comuns incluem ataques HTTP Flood, onde o atacante envia uma quantidade massiva de requisições GET ou POST para sobrecarregar a aplicação.
+
+A mitigação desse tipo de ataque geralmente exige soluções específicas como WAFs (Web Application Firewalls), sistemas de inspeção profunda de pacotes e proteção anti-DDoS com foco em camada 7.
+
+
+Interrupção do Facebook de 2021
+
+A Interrupção do Facebook de 2021 foi uma interrupção de serviço na rede social norte-americana, Facebook e as suas subsidiárias, incluindo Messenger, Instagram, WhatsApp, Mapillary e Oculus, com início às 14h40 UTC do dia 4 de outubro de 2021. As redes ficaram indisponíveis globalmente por um período superior a seis horas. A interrupção foi causada por uma remoção do Border Gateway Protocol (BGP) de todas as rotas de IP para os seus servidores de nomes de domínio (DNS), todos eles então auto-hospedados. Após a paragem dessas plataformas, os utilizadores começaram a migrar para o Twitter, Discord e Telegram, resultando em interrupções nos servidores desses aplicativos. Os serviços de DNS do Facebook começaram a poder ser acedidos novamente às 21h05. Às 22h00, o Facebook relatou que os serviços da camada de aplicativos estavam a ser restaurados lentamente para o Facebook, Instagram e WhatsApp, após mais de seis horas de interrupção. Aos poucos, WhatsApp, Facebook e Instagram voltaram a funcionar em alguns dispositivos.
+
+Antecedentes
+
+A interrupção aconteceu um dia depois da antiga gerente de produto do Facebook, Frances Haugen, ter passado informações para o 60 Minutes da CBS News, afirmando que a Facebook, Inc. estava mais preocupado com "crescimento do que segurança". O relatório mostrou que o Facebook deu tratamento preferencial a políticos e celebridades, tendo sido parcialmente usado para organizar o ataque ao Capitólio dos Estados Unidos em 2021. Haugen deverá testemunhar perante um subcomité do Senado em 4 de outubro.
+
+Causas
+
+Especialistas em segurança identificaram o problema como uma retirada do Border Gateway Protocol dos prefixos de endereço IP nos quais os servidores de nomes de domínio do Facebook estavam hospedados, tornando impossível para os utilizadores resolverem o Facebook e nomes de domínio relacionados, e alcançar os serviços. Os efeitos foram visíveis globalmente: o provedor de internet suíço Init7, por exemplo, registrou uma queda massiva no tráfego de internet para os servidores do Facebook após a mudança no BGP.
+
+A interrupção também cortou as comunicações internas do Facebook, impedindo que os funcionários enviassem ou recebessem e-mails externos, acessassem o diretório corporativo e se autenticassem em alguns serviços do Google Docs e Zoom. O New York Times relatou que os funcionários não conseguiam aceder a prédios e salas de conferência com os seus crachás de segurança. O site Downdetector, que monitora interrupções na rede, registou dezenas de milhar de incidentes em todo o mundo. Steve Gibson, pesquisador de segurança, afirmou que uma "atualização de rotina do BGP correu mal" bloqueando "pessoas com acesso remoto" aos servidores para consertar o erro, com as pessoas com acesso físico sem autorização para consertar o erro.
+
+A Cloudflare informou que por volta das 15h40 o Facebook fez um número significativo de atualizações do BGP, anunciando a remoção de rotas para os seus servidores. Ao mesmo tempo, os servidores DNS do Facebook ficaram offline. Por volta das 15h50, após a propagação das atualizações de rota, o nome de domínio do Facebook tornou-se indisponível no resolvedor DNS da Cloudflare. Por volta das 21h00, o Facebook retomou a anunciar atualizações do BGP, com o nome de domínio do Facebook tornando-se resolvível novamente às 21h20. O Facebook começou a ter seus serviços restaurados gradualmente depois que uma equipe teve acesso aos computadores do data center localizado na Califórnia e reiniciou os servidores. Por volta das 22h28, os principais serviços do Facebook pareciam estar reconectados à Internet global.
+
+Um relatório da CNBC afirmou que a interrupção foi a pior experimentada pelo Facebook desde 2008. No dia da paralisação, as ações da empresa caíram quase 5%.
+
+Resposta
+
+O diretor de tecnologia do Facebook, Mike Schroepfer, redigiu um pedido de desculpas após o tempo de inatividade ter-se estendido por várias horas, afirmando "As equipas estão trabalhando o mais rápido possível para depurar e restaurar o mais rápido possível".
+
+A congressista Alexandria Ocasio-Cortez tuitou sobre a queda, pedindo às pessoas que compartilhassem histórias "baseadas em evidências" no Twitter, ironizando com a reputação do Facebook de divulgar conteúdo factualmente questionável. O Twitter e o Reddit também postaram tweets ridicularizando a interrupção.
+
+Os usuários do Twitter e da plataforma de média social Telegram relataram uma desaceleração nos tempos de resposta, que se acredita ter sido causada por pessoas normalmente no Facebook, ao mudar de serviço para aquelas redes.
+
+
+Log4Shell
+
+Log4Shell (CVE-2021-44228) é uma vulnerabilidade de dia zero no Log4j, uma estrutura de registro Java popular, envolvendo execução arbitrária de código. A vulnerabilidade - sua existência não percebida desde 2013 - foi divulgada em particular à The Apache Software Foundation, da qual Log4j é um projeto, por Chen Zhaojun da equipe de segurança em nuvem do Alibaba em 24 de novembro de 2021, e foi divulgada publicamente em 9 de dezembro de 2021. O Apache deu ao Log4Shell uma classificação de gravidade CVSS de 10, a pontuação mais alta disponível. Estima-se que a exploração afete centenas de milhões de dispositivos e seja muito simples de executar.
+
+A vulnerabilidade se aproveita do Log4j permitindo solicitações a servidores arbitrários LDAP e JNDI, e não verificando as respostas, permitindo que invasores executem código Java arbitrário em um servidor ou outro computador, ou vazem informações confidenciais. Uma lista de seus projetos de software afetados foi publicada pela Equipe de Segurança Apache . Os serviços comerciais afetados incluem Amazon Web Services, Cloudflare, iCloud, Minecraft: Java Edition, Steam, Tencent QQ e muitos outros. De acordo com Wiz e Ernst & Young, a vulnerabilidade afetou 93% dos ambientes de nuvem corporativos.
+
+Os especialistas descreveram o Log4Shell como a maior vulnerabilidade de todos os tempos. LunaSec caracterizou-o como "uma falha de design de proporções catastróficas", e o The Washington Post disse que as descrições feitas por profissionais de segurança "beiram o apocalíptico".
+
+História
+
+Log4j é uma estrutura de registro de código aberto que permite aos desenvolvedores de software registrar dados em seus aplicativos. Esses dados podem incluir a entrada do usuário. Ela é usada de forma onipresente em aplicativos Java, especialmente em software corporativos. Originalmente escrita em 2001 por Ceki Gülcü, agora faz parte do Apache Logging Services, um projeto da Apache Software Foundation. O ex-membro da comissão de segurança cibernética do presidente Barack Obama, Tom Kellermann, descreveu o Apache como "um dos gigantescos suportes de uma ponte que facilita o tecido conectivo entre os mundos dos aplicativos e os ambientes de computador".
+
+Mitigação
+
+As correções para esta vulnerabilidade foram lançadas em 6 de dezembro de 2021, três dias antes da publicação da vulnerabilidade, no Log4j versão 2.15.0-rc1. A correção incluiu restringir os servidores e protocolos que podem ser usados para pesquisas. Os pesquisadores descobriram um bug relacionado, CVE-2021-45046, que permite a execução local ou remota de código em certas configurações não-padrão e foi corrigido na versão 2.16.0, que desabilitou todos os recursos usando JNDI e suporte para pesquisas de mensagem. Para versões anteriores, a classe org.apache.logging.log4j.core.lookup. JndiLookup precisa ser removida do caminho de classe para mitigar ambas as vulnerabilidades. Uma correção recomendada para versões anteriores era definir a propriedade do sistema log4j2.formatMsgNoLookups como true, mas essa alteração não impede a exploração de CVE-2021-45046.
+
+Uso
+
+A exploração permite que os hackers obtenham o controle de dispositivos vulneráveis usando Java. Alguns hackers empregam a vulnerabilidade para utilizar os recursos dos dispositivos das vítimas; os usos incluem mineração de criptomoeda, criação de botnets, envio de spam, estabelecimento de backdoors e outras atividades ilegais, como ataques de ransomware. Nos dias seguintes à publicação da vulnerabilidade, o Check Point monitorou milhões de ataques sendo iniciados por hackers, com alguns pesquisadores observando uma taxa de mais de cem ataques por minuto que resultou em mais de 40% de redes de negócios sendo atacadas internacionalmente.
+
+Resposta e impacto
+
+Governamental
+
+Nos Estados Unidos, a diretora da Cybersecurity and Infrastructure Security Agency (CISA), Jen Easterly, descreveu a exploração como "uma das mais sérias que já vi em toda a minha carreira, senão a mais séria", explicando que centenas de milhões de dispositivos foram afetados e aconselhando os fornecedores a priorizar as atualizações de software. As agências civis contratadas pelo governo dos Estados Unidos tinham até 24 de dezembro de 2021 para corrigir as vulnerabilidades, embora isso já tivesse permitido o acesso a centenas de milhares de alvos até essa data.
+
+O Centro Canadense de Segurança Cibernética exortou as organizações a agirem imediatamente. A Agência de Receitas do Canadá encerrou temporariamente seus serviços online após saber da exploração, enquanto o Governo de Quebec fechou quase 4.000 de seus sites como uma "medida preventiva".
+
+
+WannaCry
+
+Na informática, o WannaCry, também chamado WCry, WCrypt, WanaCrypt0r 2.0, Wanna Decryptor 2.0.é um crypto-ransomware (um malware) que afeta o sistema operativo Microsoft Windows desatualizado. A sua difusão em larga escala iniciou-se em 2017 infectando mais de 230 mil sistemas, dentre operadoras de telecomunicações, empresas de transportes, organizações governamentais, bancos e universidades. Com impacto qualificado como «sem precedentes».
+
+A ameaça utiliza técnicas de exploração alegadamente desenvolvidas pela Agência de Segurança Nacional dos Estados Unidos. Uma correção crítica para a vulnerabilidade (em sistemas operativos com suporte) foi publicada a 14 de março de 2017. Atualizações de segurança para Windows XP e Server 2003, não suportados pela empresa Microsoft, foram também lançadas em resposta a esta ameaça.
+
+Após o início da sua propagação, um investigador permitiu inadvertidamente uma estabilização do número de infeções, ao qual se seguiu pouco depois o surgimento de variantes que contornam a técnica utilizada para a prevenção da infeção. Os três endereços bitcoin incorporados no software malicioso foram monitorizados através de um bot. A 14 de maio de 2017, os resgates pagos totalizavam cerca de 33.000 dólares.
+
+Em dezembro de 2017, os Estados Unidos e o Reino Unido afirmaram formalmente que a Coreia do Norte estava por trás do ataque, embora os norte-coreanos tenham negado qualquer envolvimento no ataque.
+
+Infecção
+
+A difusão do WannaCry em larga escala iniciou-se a 12 de maio de 2017 infectando mais de 230 mil sistemas. Organizações como a Telefónica e o Serviço Nacional de Saúde britânico foram afetadas, juntamente com outras operadoras de telecomunicações, empresas de transportes, organizações governamentais, bancos e universidades. O Centro de Cibersegurança Europeu (Europol) qualificou o seu impacto como «sem precedentes».
+
+A divulgação de exploits pelo grupo The Shadow Brokers a 14 de abril de 2017 levou ao lançamento de uma correção crítica pela Microsoft em maio de 2017. A técnica de exploração utilizada pelo malware deve-se a uma vulnerabilidade (EternalBlue/MS17-010) referente ao protocolo Server Message Block (SMBv1 e SMBv2) que permite a execução de código remoto ou, em alternativa, a um backdoor (DOUBLEPULSAR).
+
+O ransomware foi detectado pela primeira vez no início de fevereiro de 2017. A ameaça propaga-se através de um anexo de correio eletrônico ou através de outros computadores comprometidos na mesma rede graças a um executável, com características de worm, que procura replicar-se por servidores Windows que estejam acessíveis através da porta 445. Após ganhar acesso a um sistema, procede à sua replicação e execução, tentando depois a ligação a um domínio na Internet. Caso esta ligação seja bem-sucedida, o processo é terminado sem que a sua componente de ransomware seja executada. Em caso contrário, um ficheiro comprimido e protegido por palavra-passe é extraído para o sistema e executado. A ameaça procede depois à extração de um cliente TOR, para a comunicação com os servidores de comando e controlo; e à alteração de privilégios do utilizador de modo a facilitar a criptografia dos dados.
+
+Após a encriptação dos dados, serviços relacionados com a recuperação de dados e restauro do sistema são desativados pelo ransomware. Como acontece com ameaças semelhantes, é exigido o resgate dos dados através do pagamento de $300 em bitcoin num prazo de três dias, e com a ameaça de destruição dos dados caso esta quantia não seja paga. A mensagem foi traduzida para mais de vinte idiomas.
+
+Em 17 de Julho de 2017 aconteceu um ataque cibernético em grande escala, em cidades do Brasil e mundo.
+
+Impacto
+
+Europa
+
+O Centro de Cibersegurança Europeu (Europol), notou o nível «sem precedentes» do acontecimento e a necessidade de uma «investigação internacional complexa que permita identificar os culpados». As repercussões desta ameaça foram sentidas particularmente no Reino Unido, onde o Serviço Nacional de Saúde se viu obrigado a cancelar consultas não-urgentes e a desviar ambulâncias. A organização viu-se fortemente afetada graças à presença de numerosos sistemas com Windows XP, cujo suporte havia terminado em abril de 2014.
+
+Foi também noticiada a paragem, no mesmo país, da linha de produção de uma fábrica pertencente à companhia automóvel Nissan e de outra, em França, pertencente à Renault.
+
+Em Portugal, as empresas afetadas, entre as quais a Portugal Telecom e a EDP, decidiram ativar os seus planos de segurança, restringindo o acesso ou desligando as suas redes internas. Por sua parte, a Polícia Judiciária deu início a investigações ao sucedido.
+
+Organizações afetadas
+
+Interrupção da propagação
+
+No dia 13 de Maio de 2017, um investigador sob o pseudónimo MalwareTech, que havia criado uma ferramenta para monitorar a propagação do ransomware em tempo real, encontrou por acidente um mecanismo de interrupção contido no código da ameaça, que permitia a prevenção da sua propagação através do contato com um domínio. No entanto, este mecanismo é interpretado como um erro por parte dos criminosos, e foi dado como expectável a criação de variantes sem este.
+
+A identidade de MalwareTech foi revelada posteriormente: o surfista britânico Marcus Hutchins que trabalha na empresa Kryptos Logic.==Referências==
+
+
+Voo Ariane V88
+
+O voo Ariane V88 foi o voo inaugural fracassado, de número 501, do foguete lançador de satélites Ariane 5, fabricado pela Arianespace,  em 4 de junho de 1996. O lançador transportava a nave espacial Cluster, com um total de quatro satélites de pesquisa da Agência Espacial Europeia.
+
+O lançamento acabou fracassando devido a múltiplos erros de projeto de software, dentre os quais código morto, que não dispunha de proteção adequada contra estouro de inteiro e reuso de código destinado exclusivamente ao Ariane 4, ocasionando um tratamento de exceção inapropriado, que interrompeu todo o sistema de navegação inercial que, de outra forma, funcionaria normalmente. Isso fez com que o foguete se desviasse de sua rota de voo 37 segundos após o lançamento, e começasse a se desintegrar sob a influência de grandes forças aerodinâmicas, até finalmente se autodestruir através de um sistema automatizado de término de voo.
+
+A falha se tornou conhecida como um das falhas de software mais vergonhosas e caras da história, resultando em perdas financeiras de mais de 370 milhões de dólares.
+
+Cronologia
+
+Em 1987, os membros da Agência Espacial Europeia se comprometeram com o desenvolvimento do Ariane 5, projetado para lançar satélites de telecomunicações cada vez mais pesados, começando com uma capacidade de carga útil de 6,5 toneladas para a órbita geoestacionária e evoluindo para um total de 12 toneladas. Dentro de sua carenagem, um sistema especial permitiria o lançamento de múltiplas cargas úteis. O Ariane 5, muito maior do que sua versão anterior, Ariane 4, também foi projetado para realizar missões em órbita baixa para dar suporte à Estação Espacial Internacional.
+
+Em comum com seu antecessor, o sistema de orientação do Ariane 5 utilizava sistemas de referência inercial (IRS) redundantes duplos, operando em um arranjo de serviço e reserva.
+
+Seu lançamento inaugural foi realizado a partir do Centro Espacial da Guiana, em Kourou, na Guiana Francesa. A sequência de lançamento começou às 05h00 de 3 de junho de 1996, horário de Kourou, com a transferência do Ariane 501 para a plataforma de lançamento. A tarde é dedicada à remoção dos dispositivos de suporte do lançador da plataforma, seguida pelo abastecimento do subsistema de hélio líquido.
+
+Aos operações de abastecimento do estágio criogênico iniciam-se em 4 de junho, às 01h30, horário de Kourou. O lançador ficou pronto para o início da sequência sincronizada aproximadamente uma hora antes do horário alvo (H0), programado para as 08h35. Vinte minutos antes do lançamento originalmente previsto, às 08h15 (H0-20), os serviços meteorológicos avisaram sobre risco de raios, fazendo com que a contagem regressiva fosse interrompida por uma hora. Às 09h35 ocorre a decolagem do lançador Ariane 501.
+
+Às 09h35min37s, passados apenas 37 segundos de operação, comandos para direção máxima foram enviados aos motores de foguete de combustível sólido e, em seguida, ao motor Vulcain. O lançador se desviou abruptamente de sua trajetória, sendo submetido à forças aerodinâmicas que levaram à sua destruição em H0+40s.
+
+Os destroços do lançador V501 caíram em uma área de cerca de 12 km², a leste da plataforma de lançamento, em região composta principalmente por manguezais e savana, tornando a tarefa de recuperação extremamente difícil.
+
+Falha no lançamento
+
+O Ariane 5 reutilizou código da plataforma de referência inercial do foguete Ariane 4, mas a parte inicial da rota de voo do Ariane 5 diferia daquela do Ariane 4, possuindo valores de velocidade horizontal mais altos. Tal fato acabou gerando um valor interno de viés horizontal — calculado dentro da função de alinhamento — inesperadamente alto. A função de alinhamento esteve em operação por aproximadamente 40 segundos de voo, cumprindo com requisitos especificados para o Ariane 4, mas que não possuíam qualquer utilidade após a decolagem no caso do Ariane 5.
+
+Os valores de viés horizontal mais altos do que os esperados provocaram uma conversão de dados de um número com ponto flutuante de 64 bits para um com valor inteiro e com sinal de 16 bits, que transbordou e causou uma exceção de hardware. Os programadores protegeram somente quatro de um total de sete variáveis críticas contra transbordamento, visando manter a carga de trabalho dentro de uma meta máxima exigida de 80% para o computador do sistema de referência inercial de bordo, baseando-se em premissas que seriam corretas para a trajetória do Ariane 4, mas não para a trajetória do Ariane 5, em relação as possíveis faixas de valores para as três variáveis desprotegidas. A exceção interrompeu ambos os módulos do sistema de referência inercial, embora eles tivessem sido projetados para serem redundantes. O módulo ativo apresentou um padrão de bits de diagnóstico ao computador de bordo, que foi interpretado como dados de voo, causando, particularmente, deflexões totais dos bocais dos propulsores de combustível sólido e do motor principal Vulcain. Isso levou a um ângulo de ataque superior a 20 graus, causando a separação dos propulsores do estágio principal, o acionamento do sistema de autodestruição do lançador e a destruição do voo.
+
+O relatório oficial do acidente, conduzido por uma comissão de inquérito liderada por Jacques-Louis Lions, atestou que "Um tema implícito no desenvolvimento do Ariane 5 é a tendência para a mitigação de falhas aleatórias. O fornecedor do sistema de navegação inercial (SRI) estava apenas seguindo as especificações que lhe foram fornecidas, as quais estipulavam que, no evento de qualquer exceção detectada, o funcionamento do processador deveria ser interrompido. A exceção que ocorreu não se deu por conta de falha aleatória, e sim erro de projeto. A exceção foi detectada, mas tratada de maneira inapropriada, porque adotou-se a visão de que o software deveria ser considerado correto até que se demonstrasse que estivesse em falha [...] Embora a falha tenha ocorrido devido a um erro sistemático de projeto de software, mecanismos podem ser introduzidos para mitigar este tipo de problema. Por exemplo, os computadores que integram os SRIs poderiam ter continuado a fornecer suas melhores estimativas sobre a informação requerida de atitude. Há motivo para preocupação quanto à possibilidade, ou mesmo exigência, de que uma exceção de software cause a paralisação de um processador durante o processamento de equipamentos críticos para a missão.De fato, a perda de uma função de software adequada é perigosa, pois o mesmo software é executado em ambas as unidades SRI. No caso do Ariane 501, isso resultou no desligamento de duas unidades críticas de equipamento que ainda estavam em pleno funcionamento."
+
+Outras questões identificadas no relatório concentraram-se nos testes:
+
+O propósito do processo de revisão, que envolve todos os principais parceiros no programa Ariane 5, é validar as decisões de projeto e obter qualificação de voo. Neste processo, as limitações do software de alinhamento não foram completamente analisadas e as possíveis implicações de permitir que o mesmo continuasse a operar durante o voo não foram completamente percebidas.
+
+A especificação do sistema de referência inercial e os testes realizados com o equipamento não incluíram especificamente os dados de trajetória do Ariane 5. Consequentemente, a função de realinhamento não foi testada sob condições simuladas de voo da nave, e o erro de projeto não foi detectado.
+
+Tecnicamente, teria sido viável incluir quase todo o sistema de referência inercial nas simulações gerais do sistema que foram realizadas. Por uma série de razões, optou-se pelo uso de saída simulada do sistema de referência inercial, e não do sistema real, ou de sua simulação detalhada. Caso o sistema tivesse sido incluído, a falha poderia ter sido identificada. Simulações pós voo foram realizadas em um computador com o software do sistema de referência inercial e em um ambiente simulado, incluindo os dados reais da trajetória do voo do Ariane 501. Tais simulações foram capazes de reproduzir fielmente a sequência de eventos que levou à falha dos sistemas de referência inercial.
+
+Outra perspectiva sobre a falha no lançamento, baseada em engenharia de sistemas, se concentra nos requisitos:
+
+Os intervalos de variação aplicáveis à velocidade horizontal e à quantidade de viés horizontal calculada a partir desta variável deveriam ter sido explicitamente estabelecidos. Ao invés disso, assumiu-se uma faixa de 16 bits.
+
+A tarefa de alinhamento deveria ter sido desativada em um momento apropriado. Em vez disso, a tarefa de alinhamento permaneceu em execução após a decolagem.
+
+Um modelo de falha das plataformas de referência inercial deveria ter sido analisado para garantir a continuidade do serviço durante todo o voo, e não apenas assumir que, no máximo, um módulo falharia. No entanto, ambos os módulos apresentaram falhas e, em vez de encerrar o voo de forma controlada, as mensagens de diagnóstico acabaram interpretadas como dados de voo.
+
+Carga útil
+
+A nave espacial Cluster consistia em quatro espaçonaves cilíndricas pesando 1 200 kg (2 650 lb), estabilizadas por rotação e alimentadas por células solares de 224 watts. As espaçonaves deveriam voar em formação tetraédrica e tinham como objetivo realizar pesquisas sobre a magnetosfera da Terra. Os satélites seriam colocados em órbitas altamente elípticas, de 17 200 por 120 600 km (10 700 por 74 900 milhas), inclinadas a 90 graus em relação ao equador.
+
+Consequências
+
+Após a falha, foram construídos quatro satélites Cluster II substitutos, que foram lançados em pares a bordo de foguetes Soyuz-U/Fregat no ano 2000.
+
+A falha no lançamento fez com que os altos riscos associados aos sistemas de computação complexa recebessem atenção da opinião pública em geral, políticos e executivos, resultando no aumento de apoio à pesquisa para assegurar a confiabilidade de sistemas críticos para a segurança. A análise automatizada subsequente do código do Ariane — escrito na linguagem de programação Ada — foi o primeiro exemplo de análise estática de código em larga escala por interpretação abstrata.
+
+O fracasso do voo também prejudicou o excelente histórico de sucesso da família de foguetes da Agência Espacial Europeia, estabelecido pela alta taxa de sucesso do modelo Ariane 4. Somente em 2007 os lançamentos do Ariane 5 passaram a ter o mesmo reconhecimento do modelo anterior em relação à confiabilidade.
+
+
+Therac-25
+
+Therac-25 era uma máquina de radioterapia controlada por computador, muito moderna para sua época, por permitir a utilização do mesmo equipamento para a aplicação de diversas doses de radiação nos pacientes. Houve uma série de pelo menos 6 acidentes entre 1985 e 1987, nos quais os pacientes receberam overdose de radiação. Pelo menos cinco mortes aconteceram devido aos acidentes, causados por erros no software que controlava a máquina. Este acidente mostrou o perigo que reside em softwares que controlam operações de segurança.
+
+Descrição do Problema
+
+A máquina trabalhava com dois modos de tratamento:
+
+Terapia de feixe de Elétrons direto, que aplicava desde baixas energias (5 MeV) até energias altas,por exemplo 25 MeV, durante um curto período de tempo;
+
+Terapia com Raios X, que usava o feixe de elétrons de 25 MeV passando por um alvo de tungstênio que o convertia em Raios X.
+
+Quando operava no modo de Feixe de Elétrons direto, um raio de elétrons de baixa intensidade era emitido diretamente da máquina, e então era espalhado para uma concentração segura usando magnetos. Quando operava em modo de Raios X, a máquina havia sido desenhada para rotacionar três componentes no caminho do feixe de alta intensidade emitido, para moderar sua força e modelar seu formato: um target que convertia o feixe de elétrons em Raios X, um filtro, que modelava estes raios e uma câmara de íons, que media a intensidade dos raios.
+
+Os acidentes aconteciam quando o feixe de alta intensidade era ativado sem o target ter sido rotacionado para seu lugar; o software da maquina não detectava que isto havia acontecido e não podia detectar que o paciente estava recebendo uma dose letal de radiação, ou evitar que isso ocorresse. O feixe de alta intensidade atingindo diretamente os pacientes causava a sensação de um forte choque elétrico e a ocorrêcia de queimaduras. Em alguns casos, os pacientes morreram pouco depois devido a exposição excessiva à radiação.
+
+Causas
+
+Pesquisadores que investigaram os acidentes encontraram diversas causas que contribuíram para os acidentes acontecerem. Entre elas, estavam alguns erros de desenvolvimento que poderiam ter sido evitados, como:
+
+O código do software não havia sido revisado/testado independentemente;
+
+O projeto do software não havia sido documentado com detalhes suficientes para permitir o entendimento dos erros
+
+A documentação do sistema fornecida aos usuários não explicava o significado dos códigos de erro que a máquina retornava
+
+A primeira reação dos funcionários da AECL (fabricante da máquina) foi negar a existência de erros.
+
+Os pesquisadores também encontraram diversos problemas de engenharia:
+
+O projeto não continha travas de hardware para prevenir que o feixe de elétrons de alta intensidade fosse aplicado sem o filtro estar em seu lugar;
+
+O software de modelos mais antigos havia sido reutilizado sem se considerar as diferenças no hardware;
+
+Os modelos antigos possuíam travas de hardware, quando o defeito se manifestava nestes modelos, eles reiniciavam, o que sempre havia sido visto como algo perturbador, mas nunca foi investigado;
+
+O software considerava que os sensores sempre funcionavam corretamente, e não havia como verificar isto;
+
+O sistema de controle não operava sincronizado com a interface usada pelo operador da máquina, e caso o operador mudasse a configuração da máquina muito rapidamente, o sistema não atribuía os valores digitados para os controles (o que levava a aplicação das doses letais);
+
+Overflows podiam fazer o software não executar procedimentos de segurança;
+
+O caso de Therac-25, suas causas e consequências, é hoje um tema de estudo constante na história da computação e da medicina.
+
+
+Bug do milênio
+
+Bug do milênio' (ou bug do milénio) ou problema do ano 2000, também chamado de bug Y2K, problema Y2K, falha Y2K ou apenas y2k (com o uso do símbolo "k" como prefixo kilo-, de milhar), foi o termo usado para se referir ao problema previsto para ocorrer em todos os sistemas informatizados na passagem do ano de 1999 para 2000. Bug é um jargão internacional usado por profissionais e conhecedores de programação, para se referir a um erro de lógica na programação de um determinado software.
+
+Contexto histórico
+
+Na década de 1960, com a solidificação de vários sistemas computacionais e a ampliação de sua abrangência, foi necessária a adoção de diversos padrões para garantir a compatibilidade entre os diversos tipos de hardware e os softwares escritos para eles. Numa época em que cada byte de memória economizado representava economia de dinheiro, muitos destes padrões adotavam formas resumidas para armazenar dados. Ainda hoje centenas destes padrões ainda estão em vigor, embora muitos tenham sido substituídos para se atualizar com a flexibilidade dos novos hardwares disponíveis.
+
+Nos sistemas mais antigos, como aqueles na linguagem COBOL e semelhantes, as datas eram armazenadas com apenas 2 dígitos para o ano, ficando os restantes implicitamente entendidos como sendo "19". Desta forma cada data armazenada deixava de ocupar oito bytes (dois para o dia, dois para o mês e quatro para o ano), e passava a ocupar somente seis bytes (somente dois no ano). A opção por representar as datas desta forma vinha da necessidade real de economia de memória e espaço de armazenamento. Hoje isso parece insignificante, mas na época isso foi o suficiente para justificar a adoção do padrão, tamanho o custo das memórias e dispositivos de armazenamento.
+
+Para ter uma ideia, imagine um banco de dados com vários campos, entre eles "data de nascimento", "data de casamento" e "data de cadastro". Para cada registro a economia nas três datas totaliza seis bytes. Se o banco de dados tiver dez mil registros são 60 kB a menos, o que era significativo numa época em que os Discos rígidos tinham o tamanho de 180 kB.
+
+O problema
+
+Como todas as datas eram representadas por somente 2 dígitos, os programas assumiam o "19" na frente para formar o ano completo. Assim, quando o calendário mudasse de 1999 para 2000 o computador iria entender que estava no ano de "19" + "00", ou seja, 1900. Os softwares mais modernos, que já utilizavam padrões mais atuais, não teriam problemas em lidar com isso e passariam corretamente para o ano 2000, mas constatou-se que uma infinidade de empresas e instituições de grande porte ainda mantinham em funcionamento programas antigos, em função da confiança adquirida por anos de uso e na sua estabilidade. Para além disso, temiam-se os efeitos que poderiam ser provocados no hardware pelo sistema BIOS, caso este reconhecesse apenas datas de dois dígitos.
+
+Caso as datas realmente "voltassem" para 1900, clientes de bancos veriam suas aplicações dando juros negativos, credores passariam a ser devedores, e boletos de cobrança para o próximo mês seriam emitidos com cem anos de atraso.
+
+Soluções
+
+O temor do bug do milênio motivou uma renovação em massa dos recursos de informática (tanto de software como de hardware) e houve uma louca corrida para corrigir, atualizar e testar os sistemas antes que ocorresse a mudança do milênio. Velhos programadores de COBOL foram tirados da aposentadoria, para voltar a trabalhar em sistemas muitas vezes desenvolvidos por eles mesmos, vinte anos antes.
+
+Na verdade, alguns dos sistemas desenvolvidos já possuíam alguma previsão para a virada do milênio. Um exemplo de técnica de compensação ao bug pode ser encontrado no velho sistema em COBOL da empresa brasileira Espiral Informática: o sistema adicionava 1900 ao ano sempre que este fosse maior que 25. E adicionava 2000 a todos os anos anteriores a 25. Assim, "24" seria interpretado como 2024, e "26", como "1926". Já "85" era interpretado como 1985. Este sistema tinha vida útil até 2025, data escolhida de forma arbitrária pelos desenvolvedores, possivelmente na crença de que em 2025 o sistema já teria sido substituído por simples obsolescência.
+
+Nos computadores da Apple Inc., era utilizado um sistema de contagem de segundos desde 1 de Janeiro de 1904, sendo que o sistema operativo se encarregava de converter os segundos em data. Sistema semelhante ao horário Unix.
+
+Consequências
+
+Surpreendentemente, houve poucas falhas decorrentes do bug do milênio, que se revelou quase inofensivo apesar de ter gerado uma onda de pânico coletivo, especialmente nos países nos quais os computadores estavam mais popularizados. Todo esse pânico foi injustificado, porque a maioria das empresas e dos consumidores domésticos havia adquirido computadores novos ou fizeram a atualização para sistemas operativos preparados para o problema. Além disso, o grande desenvolvimento informático ocorreu na segunda metade da década de 1990 (não nas décadas de 1960, 1970 ou mesmo 1980, quando apenas grandes empresas possuíam os supercomputadores que tinham esse erro), quando os sistemas já estavam preparados para o problema. Os velhos computadores afetados pelo erro foram sendo substituídos ao longo da década de 1990, com o advento da Internet e do Windows 95, o que contribuiu para um número muito reduzido de ocorrências de problemas no mundo inteiro.
+
+O assunto gerou muita polêmica devido aos grandes lucros gerados para as empresas de informática, foi alvo de matérias copiosas na imprensa e deu até origem a vários filmes. Hoje é considerado como um dos casos registrados pela história de pânico coletivo vazio de fundamentos.
+
+Na cultura popular
+
+O filme Entrapment, de 1999, é centrado num roubo tecnológico tirando partido do bug do milênio.
+
+O protagonista de Office Space (br: Como Enlouquecer Seu Chefe / pt: O Insustentável Peso do Trabalho), Peter Gibbons, trabalha como programador fazendo atualização de softwares para lidarem com o novo formato de data, corrigindo o futuro bug nestes softwares.

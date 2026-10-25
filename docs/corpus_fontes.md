@@ -5,7 +5,7 @@ O experimento usou dois corpora com as mesmas 10 perguntas (`benchmark/perguntas
 | Corpus | Arquivos | Tamanho | Onde está |
 |---|---|---|---|
 | Pequeno | `crowdstrike_2024.txt` e `cloudflare_2025.txt` | 35,7 KB, cerca de 7.500 tokens (13 chunks) | `benchmark/corpus_pequeno/` |
-| Grande | `corpus_grande.txt` (arquivo único) | 117,7 KB, cerca de 25.000 tokens (~42 chunks) | `input/` |
+| Grande | `corpus_grande.txt` (arquivo único) | 117,7 KB, cerca de 25.000 tokens (~42 chunks) | `benchmark/corpus_grande/` |
 
 ## Corpus pequeno
 

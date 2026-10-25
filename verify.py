@@ -39,7 +39,7 @@ def check_env():
                 models = models_response.json().get("models", [])
                 model_names = [m['name'] for m in models]
                 
-                for model in ["qwen2:8b", "nomic-embed-text"]:
+                for model in ["qwen3.5:4b", "nomic-embed-text"]:
                     model_found = any(model in m for m in model_names)
                     print_status(f"  - Model {model}", "OK" if model_found else "MISSING")
             except Exception as e:
@@ -59,10 +59,15 @@ def check_env():
 
     # Folders
     print("\n--- Project Structure ---")
-    for folder in ["input", "output", "ragtest"]:
+    for folder in ["input", "ragtest", "ragtest/prompts", "benchmark"]:
         exists = os.path.exists(folder)
         status = "OK" if exists else "MISSING"
         print_status(f"Folder '{folder}'", status)
+
+    # O índice só existe depois da primeira indexação
+    has_index = os.path.exists("ragtest/output/stats.json")
+    print_status("Index 'ragtest/output'", "OK" if has_index else "NOT YET",
+                 "" if has_index else "run the indexing first")
 
     # Config Files
     print("\n--- Configuration ---")
