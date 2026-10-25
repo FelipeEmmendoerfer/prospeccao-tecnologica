@@ -35,6 +35,8 @@ class QueryEngine:
             env["GRAPHRAG_LLM_MODEL"] = "qwen3.5:4b"
             env["GRAPHRAG_EMBEDDINGS_MODEL"] = "nomic-embed-text"
             env["GRAPHRAG_LLM_API_BASE"] = "http://localhost:11434/v1"
+            # No Windows o subprocesso usaria cp1252 e corromperia os acentos da resposta
+            env["PYTHONIOENCODING"] = "utf-8"
 
             # Corrigido: verificar output dentro de ragtest (onde o index é gerado)
             output_dir = Path("./ragtest/output")
@@ -55,6 +57,8 @@ class QueryEngine:
                 cmd,
                 capture_output=True,
                 text=True,
+                encoding="utf-8",
+                errors="replace",
                 timeout=QUERY_TIMEOUT_SECONDS,
                 env=env
             )
