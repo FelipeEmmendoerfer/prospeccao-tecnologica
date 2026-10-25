@@ -1,0 +1,18 @@
+Tempo total de indexação: 1603 s (26.7 min)
+  extract_graph                  809.0 s
+  create_community_reports       773.5 s
+  generate_text_embeddings        18.9 s
+
+Chamadas ao LLM (entradas no cache):
+  community_reporting          36
+  extract_graph                26
+  summarize_descriptions       67
+  text_embedding               19
+  total de chamadas de geração: 129
+
+Chunks: 13 (9734 tokens)
+Grafo: 162 entidades, 225 relações, 19 componentes, 15 entidades isoladas
+Comunidades: 36 (147 entidades agrupadas), 36 relatórios
+Tipos de entidade: {'COMPONENT': 37, 'SYSTEM': 33, 'ORGANIZATION': 32, 'EVENT': 27, 'PERSON': 17, 'GEO': 11, 'INCIDENT': 5}
+
+Disco: índice 1.3 MB, cache 5.3 MB

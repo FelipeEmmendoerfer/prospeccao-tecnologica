@@ -13,9 +13,13 @@ completion_models:
       max_tokens: 4000 # 2000 cortava a lista de relações na extração
       num_ctx: 12288 # precisa caber prompt (até ~5,5k no gleaning) + resposta (4k); o padrão do Ollama é 4096
       reasoning_effort: none # desliga o modo thinking do Qwen (think: false no Ollama)
+      timeout: 1800 # com fila no Ollama, o limite padrão de 600 s derrubava chamadas de extração
     api_base: http://localhost:11434
     auth_method: api_key
     api_key: ollama
+
+# O padrão (25) enfileira chamadas demais no Ollama; com 42 chunks, 19 extrações estouraram o tempo
+concurrent_requests: 2
 
 embedding_models:
   default_embedding_model:
@@ -88,6 +92,7 @@ extract_graph_nlp:
 
 cluster_graph:
   max_cluster_size: 10
+  use_lcc: false # o padrão (true) só agrupa o maior componente; os dois documentos formam ilhas separadas
 
 extract_claims:
   enabled: false
